@@ -87,3 +87,30 @@ class renderer(RendererHelper):
 
         raise ValueError(
             'Missing template layer renderer: %s:%s' % (self.layer, self.name))
+
+
+def vl_renderer_factory(info):
+    registry = info.registry
+
+    layer, name = info.name.split(':', 1)
+    name = name[:-3]
+
+    storage = registry.get(ID_VLAYER)
+    if not storage or layer not in storage:
+        raise ValueError('Layer is not found: "%s"'%layer)
+
+    factories = dict(
+        (name, factory) for name, factory in 
+        registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
+
+    layer = storage[layer]
+
+    for intr in layer:
+        for ext, factory in factories.items():
+            fname = os.path.join(intr['path'], '%s%s'%(name, ext))
+            if os.path.exists(fname):
+                info.name = fname
+                return factory(info)
+
+    raise ValueError(
+        'Missing template layer renderer: %s:%s' % (layer, name))

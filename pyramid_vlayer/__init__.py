@@ -23,5 +23,10 @@ def includeme(cfg):
 
     cfg.add_request_method(render_template, 'render_tmpl')
 
+    # renderer factory
+    from pyramid_vlayer.renderer import vl_renderer_factory
+
+    cfg.add_renderer('.vl', vl_renderer_factory)
+
     # scan
     cfg.scan('pyramid_vlayer')

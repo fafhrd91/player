@@ -1,0 +1,10 @@
+*~
+coverage
+*.egg-info
+*.pyc
+*.pyo
+*.bak
+.tox
+.DS_Store
+.coverage
+.noseids

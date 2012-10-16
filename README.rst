@@ -7,26 +7,26 @@ pyramid_vlayer
 
 Address templates with two parameters, category and name. 
 One level directory, folder is category and file in folder is template.
-For example 'form:view.vl'. First layer has to be defined:
+For example 'form:view.vl'. First layer has to be defined::
 
     >> config = Configurator()
     .. config.include('pyramid_vlayer')
     ..
     .. config.add_vlayer('form', path='./path_to_form_dirctory/form/')
 
-`form` directory can contain any template:
+`form` directory can contain any template::
 
     >> ./form/
     ..   view.pt
     ..   actions.jinja2
 
-Now it is possible to use any of this templates as pyramid renderer path:
+Now it is possible to use any of this templates as pyramid renderer path::
 
     >> config.add_view(
     ..     name='view.html', 
     ..     renderer='form:view.vl')
 
-or 
+or ::
 
     >> config.add_view(
     ..     name='actions.html', 
@@ -38,11 +38,11 @@ Customization
 
 Any number of layers can be registered. It doesnt require to override 
 all templates from category. For example it is possible to override view.pt
-with different template:
+with different template::
 
     >> config.add_vlayer('form', 'custom', path='path_to_form_directory_2/form')
 
-and content of this new directory:
+and content of this new directory::
 
     >> ./another_path/form/
     ..   view.jinja2
@@ -52,11 +52,11 @@ uses original template.
 
 Another example, if you want customize `bool` field from ptah.form package
 all you need is to create some folder, add it as 'fields' layer, and put
-`bool.pt` template to this folder, something like that:
+`bool.pt` template to this folder, something like that::
 
    >> config.add_vlayer('fields', 'custom', 'mypackage:/fields')
 
-and 
+and ::
 
    >> .mypackage/fields/
    ..    bool.pt
@@ -68,7 +68,7 @@ Request method
 --------------
 
 `pyramid_vlayer` also provides request method `render_tmpl`. It acccepts
-path:
+path::
 
    ..  ${structure: request.render_tmpl('form:actions')
 

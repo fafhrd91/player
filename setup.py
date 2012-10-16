@@ -38,7 +38,7 @@ setup(name='pyramid_vlayer',
       author='Nikolay Kim',
       author_email='fafhrd91@gmail.com',
       url='https://github.com/fafhrd91/pyramid_vlayer/',
-      license='MIT',
+      license='BSD',
       packages=find_packages(),
       install_requires = install_requires,
       tests_require = tests_require,
@@ -47,7 +47,7 @@ setup(name='pyramid_vlayer',
       zip_safe = False,
       entry_points = {
           'console_scripts': [
-              'pvlayer = pyramid_amdjs.script:main',
+              'pvlayer = pyramid_vlayer.script:main',
           ],
       },
   )

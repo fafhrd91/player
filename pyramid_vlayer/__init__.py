@@ -16,7 +16,7 @@ def includeme(cfg):
 
     # config directives
     cfg.add_directive('add_vlayer', vlayer.add_vlayer)
-    #cfg.add_directive('add_vlayers', amd.add_js_module)
+    cfg.add_directive('add_vlayers', vlayer.add_vlayers)
 
     # request
     from pyramid_vlayer.renderer import render_template

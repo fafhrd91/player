@@ -7,7 +7,7 @@ class TestLayerDirective(BaseTestCase):
 
     _include = False
 
-    def test_amd_directive(self):
+    def test_layer_directive(self):
         self.assertFalse(hasattr(self.config, 'add_vlayer'))
         self.config.include('pyramid_vlayer')
 
@@ -73,7 +73,7 @@ class TestLayer(BaseTestCase):
         self.config.add_vlayer(
             'test', path='pyramid_vlayer:tests/dir1/')
         self.config.add_vlayer(
-            'test', path='pyramid_amdjs:tests/bundle/dir1/')
+            'test', path='pyramid_vlayer:tests/bundle/dir1/')
 
         self.assertRaises(
             ConfigurationConflictError, self.config.commit)

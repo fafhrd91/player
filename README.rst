@@ -1,6 +1,10 @@
 pyramid_vlayer
 ==============
 
+.. image :: https://secure.travis-ci.org/fafhrd91/pyramid_vlayer.png 
+  :target:  https://secure.travis-ci.org/fafhrd91/pyramid_vlayer
+
+
 Address templates with two parameters, category and name. 
 One level directory, folder is category and file in folder is template.
 For example 'form:view.vl'. First layer has to be defined:

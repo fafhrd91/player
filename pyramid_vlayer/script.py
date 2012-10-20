@@ -9,7 +9,9 @@ from pprint import pprint
 from pyramid.compat import configparser, NativeIO, bytes_
 from pyramid.path import AssetResolver
 from pyramid.paster import bootstrap
-from pyramid.threadlocal import get_current_registry
+from pyramid.interfaces import IRendererFactory
+
+from .vlayer import ID_VLAYER
 
 
 grpTitleWrap = textwrap.TextWrapper(
@@ -20,34 +22,33 @@ grpDescriptionWrap = textwrap.TextWrapper(
     initial_indent='    ',
     subsequent_indent='    ')
 
+grpThirdLevelWrap = textwrap.TextWrapper(
+    initial_indent='      ',
+    subsequent_indent='      ')
+
 
 def main():
-    args = LayerCommand.parser.parse_args()
-    cmd = LayerCommand(args)
+    args = VLayersCommand.parser.parse_args()
+    cmd = VLayersCommand(args)
     cmd.run()
 
 
-class AmdjsCommand(object):
+class VLayersCommand(object):
 
     parser = argparse.ArgumentParser(description="vlayer management")
     parser.add_argument('config', metavar='config',
                         help='ini config file')
 
-    parser.add_argument('-b', action="store_true",
-                        dest='build',
-                        help='Build js bundles')
+    parser.add_argument('-l', action="store_true",
+                        dest='list',
+                        help='List layers')
 
-    parser.add_argument('-m', action="store_true",
-                        dest='amd_mods',
-                        help='List amd modules')
+    parser.add_argument('-lt', action="store_true",
+                        dest='list_tmpls',
+                        help='List templates')
 
-    parser.add_argument('--deps', action="store_true",
-                        dest='deps',
-                        help='Print dependency tree')
-
-    parser.add_argument('--no-min', action="store_true",
-                        dest='nomin',
-                        help='Do not minimize js bundles')
+    parser.add_argument('asset', metavar='asset', nargs='*',
+                        help='Layer\template id')
 
     def __init__(self, args):
         self.options = args
@@ -56,5 +57,68 @@ class AmdjsCommand(object):
         self.resolver = AssetResolver()
 
     def run(self):
-        pass
+        if self.options.list:
+            self.list_layers()
+        elif self.options.list_tmpls:
+            self.list_templates()
+        else:
+            self.parser.print_help()
 
+    def list_layers(self):
+        storage = self.registry.get(ID_VLAYER)
+        if not storage:
+            print ('No layers are found.')
+        
+        storage = sorted(storage.items())
+        filter = [s.strip().split(':',1)[0] for s in self.options.asset]
+
+        for name, layers in storage:
+            if filter and name not in filter:
+                continue
+
+            print(grpTitleWrap.fill('Layer: %s'%name))
+
+            for layer in layers:
+                print(grpDescriptionWrap.fill('name: %s'%layer['name']))
+                print(grpDescriptionWrap.fill('path: %s'%layer['asset']))
+                
+            print()
+
+    def list_templates(self):
+        storage = self.registry.get(ID_VLAYER)
+        if not storage:
+            print ('No layers are found.')
+        
+        storage = sorted(storage.items())
+        f_layers = [s.strip().split(':',1)[0] for s in self.options.asset]
+
+        factories = dict(
+            (name, factory) for name, factory in 
+            self.registry.getUtilitiesFor(IRendererFactory) 
+            if name.startswith('.'))
+
+        for name, layers in storage:
+            if f_layers and name not in f_layers:
+                continue
+
+            print(grpTitleWrap.fill('Layer: %s'%name))
+
+            tmpls = {}
+            for layer in layers:
+                for name in os.listdir(layer['path']):
+                    if '.' in name:
+                        rname, rtype = os.path.splitext(name)
+                        key = (layer['asset'], rname)
+                        if rtype in factories and key not in tmpls:
+                            tmpls[key] = rtype
+
+                curr_asset = None
+                for (asset, rname), rtype in sorted(tmpls.items()):
+                    if curr_asset != asset:
+                        curr_asset = asset
+                        print('')
+                        print(grpDescriptionWrap.fill(asset))
+
+                    print(grpThirdLevelWrap.fill('%s: %s'%(rname, rtype)))
+                
+            print()

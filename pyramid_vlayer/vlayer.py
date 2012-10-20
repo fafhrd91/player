@@ -26,6 +26,7 @@ def add_vlayer(cfg, layer, name='', path='', description=''):
     intr['name'] = name
     intr['layer'] = layer
     intr['path'] = directory
+    intr['asset'] = path
     intr['description'] = description
 
     storage = cfg.registry.setdefault(ID_VLAYER, {})

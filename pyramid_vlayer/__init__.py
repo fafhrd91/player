@@ -5,14 +5,18 @@ from pyramid_vlayer.renderer import template
 
 
 def includeme(cfg):
+    import os
+    from pyramid.path import AssetResolver
     from pyramid.settings import asbool, aslist
+    from pyramid.exceptions import ConfigurationError
+
+    from pyramid_vlayer import vlayer, renderer
 
     # settings
     settings = cfg.get_settings()
     settings['vlayer.order'] = [
         s.strip() for s in aslist(settings.get('vlayer.order', ''))]
-
-    from pyramid_vlayer import vlayer, renderer
+    settings['vlayer.custom'] = settings.get('vlayer.custom', None)
 
     # config directives
     cfg.add_directive('add_vlayer', vlayer.add_vlayer)
@@ -30,3 +34,16 @@ def includeme(cfg):
 
     # scan
     cfg.scan('pyramid_vlayer')
+
+    # custom
+    if settings['vlayer.custom']:
+        path = settings['vlayer.custom']
+        resolver = AssetResolver()
+        directory = resolver.resolve(path).abspath()
+        if not os.path.isdir(directory):
+            raise ConfigurationError(
+                "Directory is required for vlayer.custom setting: %s"%path)
+
+        cfg.action(
+            'pyramid_vlayer.custom',
+            vlayer.add_vlayers, (cfg, 'vlayer_custom', path), order=999999+1)

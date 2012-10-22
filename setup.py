@@ -21,7 +21,7 @@ def read(f):
 
 setup(name='pyramid_vlayer',
       version=version,
-      description=('View layers'),
+      description=('Pyramid view layers'),
       long_description='\n\n'.join((read('README.rst'), read('CHANGES.txt'))),
       classifiers=[
           "License :: OSI Approved :: MIT License",

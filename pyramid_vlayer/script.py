@@ -68,6 +68,7 @@ class VLayersCommand(object):
         storage = self.registry.get(ID_VLAYER)
         if not storage:
             print ('No layers are found.')
+            return
 
         print()
 
@@ -90,6 +91,7 @@ class VLayersCommand(object):
         storage = self.registry.get(ID_VLAYER)
         if not storage:
             print ('No layers are found.')
+            return
 
         print()
 

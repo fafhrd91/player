@@ -1,5 +1,6 @@
 # pyramid_vlayer public api
 
+from pyramid_vlayer.renderer import render
 from pyramid_vlayer.renderer import renderer
 
 
@@ -20,10 +21,8 @@ def includeme(cfg):
     cfg.add_directive('add_vlayer', vlayer.add_vlayer)
     cfg.add_directive('add_vlayers', vlayer.add_vlayers)
 
-    # request
-    from pyramid_vlayer.renderer import render_template
-
-    cfg.add_request_method(render_template, 'render_tmpl')
+    # request.render_tmpl
+    cfg.add_request_method(render, 'render_tmpl')
 
     # renderer factory
     from pyramid_vlayer.renderer import vl_renderer_factory

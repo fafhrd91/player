@@ -10,7 +10,7 @@ from .vlayer import ID_VLAYER
 ID_TEMPLATE = 'pyramid_vlayer:template'
 
 
-def render_template(request, asset, context=None, **options):
+def render(request, asset, context=None, **options):
     registry = request.registry
 
     if context is not None:
@@ -47,7 +47,7 @@ class template(object):
         self.asset = asset
 
     def __call__(self, request, context=None, **options):
-        return render_template(request, self.asset, context, **options)
+        return render(request, self.asset, context, **options)
 
 
 class renderer(RendererHelper):

@@ -16,7 +16,6 @@ def includeme(cfg):
     settings = cfg.get_settings()
     settings['vlayer.order'] = [
         s.strip() for s in aslist(settings.get('vlayer.order', ''))]
-    settings['vlayer.custom'] = settings.get('vlayer.custom', None)
 
     # config directives
     cfg.add_directive('add_vlayer', vlayer.add_vlayer)
@@ -35,15 +34,27 @@ def includeme(cfg):
     # scan
     cfg.scan('pyramid_vlayer')
 
+    # order
+    order = {}
+    for key, val in settings.items():
+        if key.startswith('vlayer.order:'):
+            layer = key[13:]
+            order[layer] = [s.strip() for s in aslist(val)]
+
+    if order:
+        cfg.action(
+            'pyramid_vlayer.order',
+            vlayer.change_layers_order, (cfg, order), order=999999+1)
+
     # custom
-    if settings['vlayer.custom']:
-        path = settings['vlayer.custom']
+    custom = settings.get('vlayer.custom', '').strip()
+    if custom:
         resolver = AssetResolver()
-        directory = resolver.resolve(path).abspath()
+        directory = resolver.resolve(custom).abspath()
         if not os.path.isdir(directory):
             raise ConfigurationError(
-                "Directory is required for vlayer.custom setting: %s"%path)
+                "Directory is required for vlayer.custom setting: %s"%custom)
 
         cfg.action(
             'pyramid_vlayer.custom',
-            vlayer.add_vlayers, (cfg, 'vlayer_custom', path), order=999999+1)
+            vlayer.add_vlayers, (cfg, 'vlayer_custom', custom), order=999999+2)

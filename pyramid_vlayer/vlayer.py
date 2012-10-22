@@ -52,3 +52,29 @@ def add_vlayers(cfg, name='', path='', description=''):
         layer_path = os.path.join(directory, layer)
         if os.path.isdir(layer_path):
             add_vlayer(cfg, layer, name, layer_path, description)
+
+
+def change_layers_order(cfg, info):
+    """ change layers order """
+    storage = cfg.registry.setdefault(ID_VLAYER, {})
+    for name, layers in info.items():
+        data = storage.get(name)
+        if not data:
+            log.warning('vlayer.order:%s setting is not found'%name)
+            continue
+
+        def in_data(name, data):
+            for intr in data:
+                if intr['name'] == name:
+                    return intr
+            return None
+
+        new_data = []
+        for l in layers:
+            intr = in_data(l, data)
+            if intr:
+                new_data.append(intr)
+
+        new_data.extend([intr for intr in data if intr not in new_data])
+
+        storage[name] = new_data

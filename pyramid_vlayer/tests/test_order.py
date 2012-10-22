@@ -1,4 +1,3 @@
-from pyramid.exceptions import ConfigurationError
 from pyramid_vlayer.vlayer import ID_VLAYER
 
 from base import BaseTestCase

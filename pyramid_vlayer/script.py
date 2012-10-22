@@ -68,7 +68,7 @@ class VLayersCommand(object):
         storage = self.registry.get(ID_VLAYER)
         if not storage:
             print ('No layers are found.')
-        
+
         print()
 
         storage = sorted(storage.items())
@@ -83,7 +83,7 @@ class VLayersCommand(object):
             for layer in layers:
                 print(grpDescriptionWrap.fill('name: %s'%layer['name']))
                 print(grpDescriptionWrap.fill('path: %s'%layer['asset']))
-                
+
             print()
 
     def list_templates(self):
@@ -92,13 +92,13 @@ class VLayersCommand(object):
             print ('No layers are found.')
 
         print()
-        
+
         storage = sorted(storage.items())
         f_layers = [s.strip().split(':',1)[0] for s in self.options.asset]
 
         factories = dict(
-            (name, factory) for name, factory in 
-            self.registry.getUtilitiesFor(IRendererFactory) 
+            (name, factory) for name, factory in
+            self.registry.getUtilitiesFor(IRendererFactory)
             if name.startswith('.'))
 
         for name, layers in storage:

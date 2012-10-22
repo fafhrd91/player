@@ -65,7 +65,7 @@ class TestLayer(BaseTestCase):
         self.assertEqual(len(data['dir1']), 1)
         self.assertEqual(data['dir1'][0]['name'], 'custom')
         self.assertTrue(data['dir1'][0]['path'].endswith(
-            'pyramid_vlayer/tests/bundle/dir1'))        
+            'pyramid_vlayer/tests/bundle/dir1'))
 
     def test_reg_conflict(self):
         self.config.commit()

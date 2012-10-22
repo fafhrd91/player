@@ -38,11 +38,11 @@ def render_template(request, asset, context=None, **options):
     result = templates[asset].render(options, None, request)
 
     request.__view__ = view
-    return result    
+    return result
 
 
 class template(object):
-    
+
     def __init__(self, asset):
         self.asset = asset
 
@@ -72,7 +72,7 @@ class renderer(RendererHelper):
             raise ValueError('Layer is not found: "%s"'%self.layer)
 
         factories = dict(
-            (name, factory) for name, factory in 
+            (name, factory) for name, factory in
             registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
 
         layer = storage[self.layer]
@@ -100,7 +100,7 @@ def vl_renderer_factory(info):
         raise ValueError('Layer is not found: "%s"'%layer)
 
     factories = dict(
-        (name, factory) for name, factory in 
+        (name, factory) for name, factory in
         registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
 
     layer = storage[layer]

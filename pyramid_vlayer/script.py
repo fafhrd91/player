@@ -69,6 +69,8 @@ class VLayersCommand(object):
         if not storage:
             print ('No layers are found.')
         
+        print()
+
         storage = sorted(storage.items())
         filter = [s.strip().split(':',1)[0] for s in self.options.asset]
 
@@ -88,6 +90,8 @@ class VLayersCommand(object):
         storage = self.registry.get(ID_VLAYER)
         if not storage:
             print ('No layers are found.')
+
+        print()
         
         storage = sorted(storage.items())
         f_layers = [s.strip().split(':',1)[0] for s in self.options.asset]
@@ -120,5 +124,5 @@ class VLayersCommand(object):
                         print(grpDescriptionWrap.fill(asset))
 
                     print(grpThirdLevelWrap.fill('%s: %s'%(rname, rtype)))
-                
+
             print()

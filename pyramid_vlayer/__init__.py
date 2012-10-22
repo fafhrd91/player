@@ -1,7 +1,6 @@
-# pyramid_vlayer
+# pyramid_vlayer public api
 
 from pyramid_vlayer.renderer import renderer
-from pyramid_vlayer.renderer import template
 
 
 def includeme(cfg):

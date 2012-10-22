@@ -47,7 +47,7 @@ class TestRequestRenderers(BaseTestCase):
         self.config.add_vlayer(
             'test', path='pyramid_vlayer:tests/dir1/')
 
-        from pyramid_vlayer import template
+        from pyramid_vlayer.renderer import template
         tmpl = template('test:view')
 
         text = tmpl(self.request, object())

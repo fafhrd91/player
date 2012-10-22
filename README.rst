@@ -4,10 +4,32 @@ pyramid_vlayer
 .. image :: https://secure.travis-ci.org/fafhrd91/pyramid_vlayer.png 
   :target:  https://secure.travis-ci.org/fafhrd91/pyramid_vlayer
 
+pyramid_vlayer allows to address templates with two parameters, 
+category and name. Also it is possible to use set of directories
+for each layer, in that case `pyramid_vlayer` searches templates
+in each directory. It allows to override templates without changing
+code. For example form library can define layer `field`::
 
-Address templates with two parameters, category and name. 
-One level directory, folder is category and file in folder is template.
-For example 'form:view.vl'. First layer has to be defined::
+     >> ls ./fields/
+     .. bool.pt
+     .. file.pt
+     ...
+     .. textarea.pt
+
+In your application you can override any of this template by defining 
+new layer for `field` category::
+
+     >> ls ./myproject/fields/
+     .. bool.pt
+
+Usually top level directory is a category and file in directory is template.
+For example 'form:view.vl'::
+
+    `form` - layer category
+    `view` - template name
+    `.vl`  - custom pyramid renderer factory
+
+Layer can to be defined with `add_vlayer` config directive::
 
     >> config = Configurator()
     .. config.include('pyramid_vlayer')
@@ -20,7 +42,7 @@ For example 'form:view.vl'. First layer has to be defined::
     ..   view.pt
     ..   actions.jinja2
 
-Now it is possible to use any of this templates as pyramid renderer path::
+It is possible to use any of this templates as pyramid renderer path::
 
     >> config.add_view(
     ..     name='view.html', 
@@ -36,9 +58,10 @@ or ::
 Customization
 -------------
 
-Any number of layers can be registered. It doesnt require to override 
-all templates from category. For example it is possible to override view.pt
-with different template::
+Any number of layer categories can be registered and any number of
+layers can be registered in each category. It doesnt require to override 
+all templates from category. For example it is possible to override just 
+view.pt template::
 
     >> config.add_vlayer('form', 'custom', path='path_to_form_directory_2/form')
 
@@ -61,8 +84,6 @@ and ::
    >> .mypackage/fields/
    ..    bool.pt
 
-no need specific template overriding.
-
 
 Request method
 --------------
@@ -73,6 +94,12 @@ path::
    ..  ${structure: request.render_tmpl('form:actions')
 
 `.vl` extension is optional in this case.
+
+
+pvlayer
+-------
+
+...
 
 
 License

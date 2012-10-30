@@ -5,9 +5,13 @@ from pyramid.interfaces import IRendererFactory
 from pyramid.renderers import RendererHelper
 from pyramid.threadlocal import get_current_registry
 
-from .vlayer import ID_VLAYER
+from .layer import ID_LAYER
 
-ID_TEMPLATE = 'pyramid_vlayer:template'
+ID_TEMPLATE = 'pyramid_layer:template'
+
+
+class RendererNotFound(ValueError):
+    """ Renderer is not found """
 
 
 def render(request, asset, context=None, **options):
@@ -21,7 +25,12 @@ def render(request, asset, context=None, **options):
         templates = registry[ID_TEMPLATE] = {}
 
     if asset not in templates:
-        templates[asset] = renderer(asset)
+        if asset.endswith('.lt'):
+            r_name = asset
+        else:
+            r_name = '%s.lt'%asset
+
+        templates[asset] = RendererHelper(r_name, registry=registry)
 
     view = getattr(request, '__view__', None)
     if view is None:
@@ -35,7 +44,7 @@ def render(request, asset, context=None, **options):
               'context': context,
               'request': request}
 
-    result = templates[asset].render(options, None, request)
+    result = templates[asset].render(options, system, request)
 
     request.__view__ = view
     return result
@@ -50,52 +59,24 @@ class template(object):
         return render(request, self.asset, context, **options)
 
 
-class renderer(RendererHelper):
+class renderer(object):
 
-    def __init__(self, asset):
-        layer, name = asset.split(':', 1)
-        self.layer = layer
-        self.name = name
-        self.package = None
-        self.type = None
+    def __init__(self, rendr, filter):
+        self.rendr = rendr
+        self.filter = filter
 
-    @reify
-    def registry(self):
-        return get_current_registry()
-
-    @reify
-    def renderer(self):
-        registry = self.registry
-
-        storage = registry.get(ID_VLAYER)
-        if not storage or self.layer not in storage:
-            raise ValueError('Layer is not found: "%s"'%self.layer)
-
-        factories = dict(
-            (name, factory) for name, factory in
-            registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
-
-        layer = storage[self.layer]
-
-        for intr in layer:
-            for ext, factory in factories.items():
-                fname = os.path.join(intr['path'], '%s%s'%(self.name, ext))
-                if os.path.exists(fname):
-                    self.type = ext
-                    self.name = fname
-                    return factory(self)
-
-        raise ValueError(
-            'Missing template layer renderer: %s:%s' % (self.layer, self.name))
+    def __call__(self, value, system):
+        value.update(self.filter(system['context'], system['request']))
+        return self.rendr(value, system)
 
 
-def vl_renderer_factory(info):
+def lt_renderer_factory(info):
     registry = info.registry
 
     layer, name = info.name.split(':', 1)
     name = name[:-3]
 
-    storage = registry.get(ID_VLAYER)
+    storage = registry.get(ID_LAYER)
     if not storage or layer not in storage:
         raise ValueError('Layer is not found: "%s"'%layer)
 
@@ -103,14 +84,25 @@ def vl_renderer_factory(info):
         (name, factory) for name, factory in
         registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
 
-    layer = storage[layer]
+    layer_data = storage[layer]
 
-    for intr in layer:
+    # filter
+    filter = None
+    for intr in layer_data:
+        if name in intr['filters']:
+            filter = intr['filters'][name]
+            break
+
+    # search template
+    for intr in layer_data:
         for ext, factory in factories.items():
             fname = os.path.join(intr['path'], '%s%s'%(name, ext))
             if os.path.exists(fname):
                 info.name = fname
-                return factory(info)
+                if filter is not None:
+                    return renderer(factory(info), filter)
+                else:
+                    return factory(info)
 
-    raise ValueError(
+    raise RendererNotFound(
         'Missing template layer renderer: %s:%s' % (layer, name))

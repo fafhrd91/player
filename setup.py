@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 version='0.1'
 
 install_requires = ['setuptools',
-                    'pyramid >= 1.4.0a2',
+                    'pyramid >= 1.4.0a3',
 ]
 
 if sys.version_info[:2] == (2, 6):
@@ -19,7 +19,7 @@ def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
 
-setup(name='pyramid_vlayer',
+setup(name='pyramid_layer',
       version=version,
       description=('Pyramid view layers'),
       long_description='\n\n'.join((read('README.rst'), read('CHANGES.txt'))),
@@ -37,7 +37,7 @@ setup(name='pyramid_vlayer',
           'Topic :: Internet :: WWW/HTTP :: WSGI'],
       author='Nikolay Kim',
       author_email='fafhrd91@gmail.com',
-      url='https://github.com/fafhrd91/pyramid_vlayer/',
+      url='https://github.com/fafhrd91/pyramid_layer/',
       license='BSD',
       packages=find_packages(),
       install_requires = install_requires,
@@ -47,7 +47,7 @@ setup(name='pyramid_vlayer',
       zip_safe = False,
       entry_points = {
           'console_scripts': [
-              'pvlayer = pyramid_vlayer.script:main',
+              'player = pyramid_layer.script:main',
           ],
       },
   )

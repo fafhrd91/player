@@ -1,4 +1,4 @@
-""" pvlayer command """
+""" player command """
 from __future__ import print_function
 import os
 import sys
@@ -11,7 +11,7 @@ from pyramid.path import AssetResolver
 from pyramid.paster import bootstrap
 from pyramid.interfaces import IRendererFactory
 
-from .vlayer import ID_VLAYER
+from .layer import ID_LAYER
 
 
 grpTitleWrap = textwrap.TextWrapper(
@@ -28,14 +28,14 @@ grpThirdLevelWrap = textwrap.TextWrapper(
 
 
 def main():
-    args = VLayersCommand.parser.parse_args()
-    cmd = VLayersCommand(args)
+    args = LayersCommand.parser.parse_args()
+    cmd = LayersCommand(args)
     cmd.run()
 
 
-class VLayersCommand(object):
+class LayersCommand(object):
 
-    parser = argparse.ArgumentParser(description="vlayer management")
+    parser = argparse.ArgumentParser(description="player management")
     parser.add_argument('config', metavar='config',
                         help='ini config file')
 
@@ -65,7 +65,7 @@ class VLayersCommand(object):
             self.parser.print_help()
 
     def list_layers(self):
-        storage = self.registry.get(ID_VLAYER)
+        storage = self.registry.get(ID_LAYER)
         if not storage:
             print ('No layers are found.')
             return
@@ -88,7 +88,7 @@ class VLayersCommand(object):
             print()
 
     def list_templates(self):
-        storage = self.registry.get(ID_VLAYER)
+        storage = self.registry.get(ID_LAYER)
         if not storage:
             print ('No layers are found.')
             return

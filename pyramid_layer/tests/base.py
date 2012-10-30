@@ -43,4 +43,4 @@ class BaseTestCase(TestCase):
         self.request.registry = self.registry
 
         if self._include:
-            self.config.include('pyramid_vlayer')
+            self.config.include('pyramid_layer')

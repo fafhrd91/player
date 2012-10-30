@@ -23,6 +23,23 @@ class TestRequestRenderers(BaseTestCase):
         text = self.request.render_tmpl('test:view', object()).strip()
         self.assertEqual(text, '<h1>Test</h1>')
 
+    def test_render_tmpl_with_filter(self):
+        self.config.add_layer(
+            'test', path='pyramid_layer:tests/dir1/')
+
+        _calls = []
+        def _filter(context, request):
+            _calls.append((context, request))
+            return {}
+
+        self.config.add_tmpl_filter('test:view', _filter)
+
+        ob = object()
+        text = self.request.render_tmpl('test:view', ob).strip()
+        self.assertEqual(text, '<h1>Test</h1>')
+        self.assertEqual(1, len(_calls))
+        self.assertEqual((ob, self.request), _calls[0])
+
     def test_render_tmpl_ext(self):
         self.config.add_layer(
             'test', path='pyramid_layer:tests/dir1/')

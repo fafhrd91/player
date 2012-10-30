@@ -1,9 +1,6 @@
 import os
-import venusian
-from pyramid.decorator import reify
 from pyramid.interfaces import IRendererFactory
 from pyramid.renderers import RendererHelper
-from pyramid.threadlocal import get_current_registry
 
 from .layer import ID_LAYER
 

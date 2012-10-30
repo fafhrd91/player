@@ -29,30 +29,64 @@ For example 'form:view.lt'::
     `view` - template name
     `.lt`  - custom pyramid renderer factory
 
-Layer can to be defined with `add_layer` config directive::
+Layer can to be defined with `add_layer` config directive:
+
+.. code-block:: python
 
     >> config = Configurator()
     .. config.include('pyramid_layer')
     ..
     .. config.add_layer('form', path='./path_to_form_dirctory/form/')
 
-`form` directory can contain any template::
+`form` directory can contain any template:
+
+.. code-block:: python
 
     >> ./form/
     ..   view.pt
     ..   actions.jinja2
 
-It is possible to use any of this templates as pyramid renderer path::
+It is possible to use any of this templates as pyramid renderer path:
+
+.. code-block:: python
 
     >> config.add_view(
     ..     name='view.html', 
     ..     renderer='form:view.lt')
 
-or ::
+or :
+
+.. code-block:: python
 
     >> config.add_view(
     ..     name='actions.html', 
     ..     renderer='form:actions.lt')
+
+
+It is possible to run python code before rendering template. 
+There are `add_tmpl_filter` directive and `pyramid_layer.tmpl_filter` 
+decorator:
+
+.. code-block:: python
+
+    >> def form_actions(context, request):
+    ..     return {'url': ...}
+
+    >> config.add_tmpl_filter('form:actions', form_action, name='custom')
+   
+or:
+
+.. code-block:: python
+
+    >> import pyramid_layer
+
+    >> @pyramid_layer.tmpl_filter('form:actions', name='custom')
+    .. def form_actions(context, request):
+    ..     return {'url': ...}
+
+`form_actions` function gets call just before rendering template.
+Layer has to be defined with `add_layer` directve before registering 
+template filter function.
 
 
 Customization

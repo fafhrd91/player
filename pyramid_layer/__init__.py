@@ -7,7 +7,7 @@ from pyramid_layer.renderer import render, RendererNotFound
 def includeme(cfg):
     import os
     from pyramid.path import AssetResolver
-    from pyramid.settings import asbool, aslist
+    from pyramid.settings import aslist
     from pyramid.exceptions import ConfigurationError
 
     from pyramid_layer.renderer import lt_renderer_factory

@@ -1,9 +1,5 @@
 import mock
-import os, shutil
 import sys
-import tempfile
-
-import pyramid
 from pyramid.compat import NativeIO
 from pyramid_layer import script as layer
 

@@ -1,5 +1,3 @@
-from pyramid.exceptions import ConfigurationConflictError
-
 from base import BaseTestCase
 
 

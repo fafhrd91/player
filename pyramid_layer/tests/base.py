@@ -1,7 +1,5 @@
 import sys
-from zope.interface import directlyProvides
 from pyramid import testing
-from pyramid.config import Configurator
 from pyramid.interfaces import IRequest
 
 if sys.version_info[:2] == (2, 6): # pragma: no cover

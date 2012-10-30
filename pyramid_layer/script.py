@@ -1,12 +1,8 @@
 """ player command """
 from __future__ import print_function
 import os
-import sys
 import argparse
 import textwrap
-import tempfile
-from pprint import pprint
-from pyramid.compat import configparser, NativeIO, bytes_
 from pyramid.path import AssetResolver
 from pyramid.paster import bootstrap
 from pyramid.interfaces import IRendererFactory

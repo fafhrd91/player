@@ -46,7 +46,7 @@ It is possible to use any of this templates as pyramid renderer path::
 
     >> config.add_view(
     ..     name='view.html', 
-    ..     renderer='form:view.l')
+    ..     renderer='form:view.lt')
 
 or ::
 
@@ -77,7 +77,7 @@ Another example, if you want customize `bool` field from ptah.form package
 all you need is to create some folder, add it as 'fields' layer, and put
 `bool.pt` template to this folder, something like that::
 
-   >> config.add_layer('fields', 'custom', 'mypackage:/fields')
+   >> config.add_layer('fields', 'custom', 'mypackage:fields')
 
 and ::
 
@@ -93,7 +93,7 @@ path::
 
    ..  ${structure: request.render_tmpl('form:actions')
 
-`.l` extension is optional in this case.
+`.lt` extension is optional in this case.
 
 
 player

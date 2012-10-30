@@ -24,7 +24,7 @@ grpDescriptionWrap = textwrap.TextWrapper(
 
 grpThirdLevelWrap = textwrap.TextWrapper(
     initial_indent='      ',
-    subsequent_indent='      ')
+    subsequent_indent='      ', width=250)
 
 
 def main():
@@ -125,6 +125,13 @@ class LayersCommand(object):
                         print('')
                         print(grpDescriptionWrap.fill(asset))
 
-                    print(grpThirdLevelWrap.fill('%s: %s'%(rname, rtype)))
+                    if rname in layer['filters']:
+                        f = layer['filters'][rname]
+                        sinfo = ('%s.py: %s'%(
+                            f.__module__.replace('.', '/'), f.__name__))
+                        print(grpThirdLevelWrap.fill('%s: %s (%s)'%(
+                            rname, rtype, sinfo)))
+                    else:
+                        print(grpThirdLevelWrap.fill('%s: %s'%(rname, rtype)))
 
             print()

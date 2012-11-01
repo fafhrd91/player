@@ -6,7 +6,6 @@ import random
 import inspect
 import venusian
 from collections import namedtuple
-from collections import OrderedDict
 from zope.interface import providedBy, Interface
 from pyramid.compat import text_, string_types
 from pyramid.config.views import DefaultViewMapper
@@ -15,6 +14,11 @@ from pyramid.location import lineage
 from pyramid.registry import Introspectable
 from pyramid.renderers import RendererHelper
 from pyramid.interfaces import IRequest, IRouteRequest, IView, IViewClassifier
+
+try:
+    from collections import OrderedDict
+except ImportError: # pragma no cover
+    from ordereddict import OrderedDict
 
 
 log = logging.getLogger('pyramid_layer')

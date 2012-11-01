@@ -11,6 +11,7 @@ install_requires = ['setuptools',
 if sys.version_info[:2] == (2, 6):
     install_requires.extend((
         'argparse',
+        'ordereddict',
         'unittest2'))
 
 tests_require = install_requires + ['nose', 'mock']

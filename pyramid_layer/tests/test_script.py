@@ -80,6 +80,11 @@ class TestPlayerCommand(BaseTestCase):
         self.config.add_layer(
             'test2', path='pyramid_layer:tests/bundle/')
 
+        def test(): pass
+
+        self.config.add_tmpl_filter(
+            'test1:actions', test)
+
         sys.argv[:] = ['player', '-lt', 'pyramid_layer.ini']
 
         layer.main()
@@ -87,7 +92,7 @@ class TestPlayerCommand(BaseTestCase):
         val = self.out.getvalue()
         self.assertIn('* Layer: test1', val)
         self.assertIn('pyramid_layer:tests/dir1/', val)
-        self.assertIn('actions: .pt', val)
+        self.assertIn('actions: .pt (test_script.py: test)', val)
         self.assertIn('* Layer: test2', val)
 
     @mock.patch('pyramid_layer.script.bootstrap')

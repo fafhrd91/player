@@ -2,7 +2,7 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-version='0.1'
+version='0.2'
 
 install_requires = ['setuptools',
                     'pyramid >= 1.4.0a3',

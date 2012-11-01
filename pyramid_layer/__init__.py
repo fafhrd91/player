@@ -1,6 +1,10 @@
 # pyramid_layer public api
 
+__all__ = ['tmpl_filter', 'wrap_layout',
+           'render', 'RendererNotFound', 'includeme']
+
 from pyramid_layer.layer import tmpl_filter
+from pyramid_layer.layout import wrap_layout
 from pyramid_layer.renderer import render, RendererNotFound
 
 
@@ -13,10 +17,12 @@ def includeme(cfg):
     from pyramid_layer.renderer import lt_renderer_factory
     from pyramid_layer.layer import add_layer, add_layers, change_layers_order
     from pyramid_layer.layer import add_tmpl_filter
+    from pyramid_layer.layout import add_layout
 
     # config directives
     cfg.add_directive('add_layer', add_layer)
     cfg.add_directive('add_layers', add_layers)
+    cfg.add_directive('add_layout', add_layout)
     cfg.add_directive('add_tmpl_filter', add_tmpl_filter)
 
     # request.render_tmpl

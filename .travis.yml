@@ -1,10 +1,14 @@
 language: python
-python:
-  - 2.6
-  - 2.7
-  - 3.2
+env:
+    - PYTHON_VER=2.6
+    - PYTHON_VER=2.7
+    - PYTHON_VER=3.2
+    - PYTHON_VER=3.3
+
 install:
   - python setup.py develop
+
 script: python setup.py test
+
 notifications:
   irc: "irc.freenode.org#ptahproject"

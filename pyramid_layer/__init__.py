@@ -1,11 +1,13 @@
 # pyramid_layer public api
 
-__all__ = ['tmpl_filter', 'wrap_layout',
+__all__ = ['tmpl_filter', 'wrap_layout', 'add_message',
            'render', 'RendererNotFound', 'includeme']
 
 from pyramid_layer.layer import tmpl_filter
 from pyramid_layer.layout import wrap_layout
-from pyramid_layer.renderer import render, RendererNotFound
+from pyramid_layer.renderer import render
+from pyramid_layer.renderer import RendererNotFound
+from pyramid_layer.message import add_message
 
 
 def includeme(cfg):
@@ -62,7 +64,7 @@ def includeme(cfg):
             add_layers, (cfg, 'layer_custom', custom), order=999999+2)
 
     # messages layer and request helpers
-    from pyramid_layer.message import add_message, render_messages
+    from pyramid_layer.message import render_messages
 
     cfg.add_layer('message', path='pyramid_layer:templates/message/')
 

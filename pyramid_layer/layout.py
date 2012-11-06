@@ -108,13 +108,13 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
 
     .. code-block:: python
 
-      class PageLayout(ptah.View):
+      class PageLayout(object):
            ...
 
-      config.add_layout('page', parent='page', renderer='ptah:template/page.pt')
+      config.add_layout('page', parent='page', renderer='my_package:template/page.pt')
 
 
-    To use layout with pyramid view use ``wrapper=ptah.wrap_layout()``
+    To use layout with pyramid view use ``wrapper=pyramid_layer.wrap_layout()``
 
     Example:
 
@@ -122,11 +122,11 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
 
       config.add_view('
           index.html',
-          wrapper=ptah.wrap_layout(),
+          wrapper=pyramid_layer.wrap_layout(),
           renderer = '...')
 
     in this example '' layout is beeing used. You can specify specific layout
-    name for pyramid view ``ptah.wrap_layout('page')``
+    name for pyramid view ``pyramid_layer.wrap_layout('page')``
 
     """
     (scope, module,
@@ -296,13 +296,13 @@ def wrap_layout(layout=''):
     .. code-block:: python
 
       config = Configurator()
-      config.include('ptah')
+      config.include('pyramid_layer')
 
-      config.ptah_layout('page')
+      config.add_layout('page')
 
       config.add_view(
           'index.html',
-          wrapper=ptah.wrap_layout())
+          wrapper=pyramid_layer.wrap_layout())
 
     """
     lname = '#layout-{0}'.format(layout)

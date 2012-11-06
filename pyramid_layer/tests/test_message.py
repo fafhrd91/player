@@ -57,7 +57,7 @@ class TestStatusMessages(BaseTestCase):
 
     def test_messages_render_message_with_error(self):
         self.config.add_layer(
-            'message', 'test', path='ptah:tests/messages/')
+            'message', 'test', path='pyramid_layer:tests/messages/')
 
         def customMessage(context, request):
             raise ValueError()
@@ -85,18 +85,10 @@ class TestStatusMessages(BaseTestCase):
             add_message, self.request, 'message', 'unknown')
 
     def test_messages_request_attr(self):
-        from pyramid.request import Request
-        from pyramid.testing import DummySession
-        from pyramid.interfaces import IRequestExtensions
-
-        req = Request(environ=self._environ)
-        req.registry = self.registry
-        req.session = DummySession()
-
-        extensions = self.registry.getUtility(IRequestExtensions)
-        req._set_extensions(extensions)
-
-        # add_message
+        """
+        Request has `add_message` and `render_messages` methods
+        """
+        req = self.make_request()
         req.add_message('message')
 
         res = req.render_messages()
@@ -104,4 +96,3 @@ class TestStatusMessages(BaseTestCase):
         self.assertEqual(
             res,
             text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>\n','utf-8'))
-        

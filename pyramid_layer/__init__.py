@@ -34,9 +34,6 @@ def includeme(cfg):
     # renderer factory
     cfg.add_renderer('.lt', lt_renderer_factory)
 
-    # scan
-    cfg.scan('pyramid_layer')
-
     # order
     settings = cfg.get_settings()
 
@@ -51,7 +48,7 @@ def includeme(cfg):
             'pyramid_layer.order',
             change_layers_order, (cfg, order), order=999999+1)
 
-    # custom
+    # global custom layer
     custom = settings.get('layer.custom', '').strip()
     if custom:
         resolver = AssetResolver()
@@ -63,3 +60,14 @@ def includeme(cfg):
         cfg.action(
             'pyramid_layer.custom',
             add_layers, (cfg, 'layer_custom', custom), order=999999+2)
+
+    # messages layer and request helpers
+    from pyramid_layer.message import add_message, render_messages
+
+    cfg.add_layer('message', path='pyramid_layer:templates/message/')
+
+    cfg.add_request_method(add_message, 'add_message')
+    cfg.add_request_method(render_messages, 'render_messages')
+
+    # scan
+    cfg.scan('pyramid_layer')

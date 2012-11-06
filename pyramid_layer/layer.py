@@ -79,7 +79,8 @@ def add_tmpl_filter(cfg, template, callable, name='', description=''):
                 intr['filters'][template] = mapped_view
                 return
 
-        raise ConfigurationError("Can't find layer: %s(%s)"%(layer, name))
+        raise ConfigurationError(
+            "Can't find layer: %s%s"%(layer, '(%s)'%name if name else ''))
 
     cfg.action((ID_LAYER, 'filter', layer, template, name), action)
 

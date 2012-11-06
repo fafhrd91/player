@@ -38,6 +38,10 @@ class TestLayer(BaseTestCase):
         self.assertTrue(data['test'][0]['path'].endswith(
             'pyramid_layer/tests/dir1/'))
 
+    def test_layer_path_required(self):
+        self.assertRaises(
+            ConfigurationError, self.config.add_layer, 'test')
+
     def test_multple_layer_registration(self):
         from pyramid_layer.layer import ID_LAYER
 

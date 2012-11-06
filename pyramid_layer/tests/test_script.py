@@ -2,6 +2,7 @@ import mock
 import sys
 from pyramid.compat import NativeIO
 from pyramid_layer import script as layer
+from pyramid_layer.layer import ID_LAYER
 
 from base import BaseTestCase
 
@@ -32,6 +33,7 @@ class TestPlayerCommand(BaseTestCase):
     @mock.patch('pyramid_layer.script.bootstrap')
     def test_list_categories_no_layers(self, m_bs):
         m_bs.return_value = {'registry': self.registry}
+        self.registry[ID_LAYER] = {}
 
         sys.argv[:] = ['player', '-l', 'pyramid_layer.ini']
 
@@ -116,6 +118,7 @@ class TestPlayerCommand(BaseTestCase):
     @mock.patch('pyramid_layer.script.bootstrap')
     def test_list_templates_no_layers(self, m_bs):
         m_bs.return_value = {'registry': self.registry}
+        self.registry[ID_LAYER] = {}
 
         sys.argv[:] = ['player', '-lt', 'pyramid_layer.ini']
 

@@ -20,6 +20,9 @@ def add_layer(cfg, layer, name='', path='', description=''):
     :param path: asset path
     :param description: module description
     """
+    if not path:
+        raise ConfigurationError('Path is required')
+
     discr = (ID_LAYER, name, layer)
 
     resolver = AssetResolver()

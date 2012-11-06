@@ -261,13 +261,15 @@ class LayoutRenderer(object):
         if debug:
             content = self.view_info(debug, context, request, content)
 
+        value = getattr(request, '__layout_data__', None)
+        if value is None:
+            value = {}
+
         for layout, layoutcontext in chain:
-            if layout.view is None:
-                value = {}
-            else:
-                value = layout.view(layoutcontext, request)
-                if value is None:
-                    value = {}
+            if layout.view is not None:
+                vdata = layout.view(layoutcontext, request)
+                if vdata is not None:
+                    value.update(vdata)
 
             system = {'view': getattr(request, '__view__', None),
                       'renderer_info': layout.renderer,
@@ -323,3 +325,12 @@ def wrap_layout(layout=''):
 
     venusian.attach(module.__layer_data__, callback, category='player')
     return lname
+
+
+def set_layout_data(request, name, val):
+    try:
+        data = request.__layout_data__
+    except:
+        data = request.__layout_data__ = {}
+
+    data[name] = val

@@ -17,7 +17,7 @@ def includeme(cfg):
     from pyramid_layer.renderer import lt_renderer_factory
     from pyramid_layer.layer import add_layer, add_layers, change_layers_order
     from pyramid_layer.layer import add_tmpl_filter
-    from pyramid_layer.layout import add_layout
+    from pyramid_layer.layout import add_layout, set_layout_data
 
     # config directives
     cfg.add_directive('add_layer', add_layer)
@@ -27,6 +27,9 @@ def includeme(cfg):
 
     # request.render_tmpl
     cfg.add_request_method(render, 'render_tmpl')
+
+    # request.set_layout_data
+    cfg.add_request_method(set_layout_data, 'set_layout_data')
 
     # renderer factory
     cfg.add_renderer('.lt', lt_renderer_factory)

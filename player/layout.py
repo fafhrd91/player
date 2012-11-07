@@ -250,14 +250,14 @@ class LayoutRenderer(object):
         if not chain:
             log.warning("Can't find layout '%s' for context '%s'",
                         self.layout, context)
+            return request.wrapped_response
 
         if isinstance(request.wrapped_response, HTTPException):
             return request.wrapped_response
 
-        debug = getattr(request, '__layout_debug__', False)
-
         content = text_(request.wrapped_body, 'utf-8')
 
+        debug = getattr(request, '__layout_debug__', False)
         if debug:
             content = self.view_info(debug, context, request, content)
 

@@ -8,9 +8,12 @@ from base import BaseTestCase
 
 class View(object):
 
-    def __init__(self, context, request):
+    def __init__(self, context=None, request=None):
         self.context = context
         self.request = request
+
+    def __call__(self):
+        return {}
 
 
 class TestLayout(BaseTestCase):
@@ -269,6 +272,45 @@ class TestLayout(BaseTestCase):
             IView, name=lname)
         self.assertIs(renderer, renderer2)
 
+    def test_layout_renderer_layout_http_exc(self):
+        from pyramid.httpexceptions import HTTPFound
+        from player.layout import LayoutRenderer
+        self.config.add_layout('test')
+
+        found = HTTPFound()
+        self.request.wrapped_response = found
+
+        rendr = LayoutRenderer('test')
+        res = rendr(View(), self.request)
+
+        self.assertIs(res, found)
+
+    def test_renderer_layout_no_layouts(self):
+        from player.layout import LayoutRenderer
+
+        found = object()
+        self.request.wrapped_response = found
+
+        rendr = LayoutRenderer('test')
+        res = rendr(View(), self.request)
+
+        self.assertIs(res, found)
+
+    def test_layout_renderer_layout_debug(self):
+        from player.layout import LayoutRenderer
+        self.config.add_layout('test', view=View,
+                               renderer='player:tests/test-layout.pt')
+
+        self.request.__layout_debug__ = True
+        self.request.wrapped_body = '<h1>text</h1>'
+        self.request.wrapped_response = '<h1>text</h1>'
+
+        rendr = LayoutRenderer('test')
+        res = rendr(Context(), self.request)
+
+        self.assertIn('<!-- layout:', str(res))
+        self.assertIn('<h1>text</h1>', str(res))
+
     def test_layout_renderer_layout_info(self):
         from player.layout import query_layout, LayoutRenderer
 
@@ -304,6 +346,16 @@ class TestLayout(BaseTestCase):
         chain = query_layout_chain(Root(), Context(), self.request)
 
         self.assertEqual([], chain)
+
+    def test_set_layout_data(self):
+        request = self.request
+
+        self.assertFalse(hasattr(request, '__layout_data__'))
+
+        request.set_layout_data('test', 123)
+        self.assertTrue(hasattr(request, '__layout_data__'))
+        self.assertIn('test', request.__layout_data__)
+        self.assertEqual(request.__layout_data__['test'], 123)
 
 
 class Context(object):

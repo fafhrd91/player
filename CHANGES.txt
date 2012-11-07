@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.3 (Unreleased)
+0.3 (11-07-2012)
 ----------------
 
 - Added `set_layout_data` request method, allow to set global layout options

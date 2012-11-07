@@ -28,7 +28,7 @@ def add_layer(cfg, layer, name='', path='', description=''):
     resolver = AssetResolver()
     directory = resolver.resolve(path).abspath()
 
-    intr = Introspectable(ID_LAYER, discr, name, ID_LAYER)
+    intr = Introspectable(ID_LAYER, discr, name, 'player-layer')
     intr['name'] = name
     intr['layer'] = layer
     intr['path'] = directory

@@ -63,6 +63,11 @@ def includeme(cfg):
             'pyramid_layer.custom',
             add_layers, (cfg, 'layer_custom', custom), order=999999+2)
 
+    # formatters
+    from pyramid_layer import formatter
+    cfg.add_directive('add_formatter', formatter.add_formatter)
+    cfg.add_request_method(formatter.formatters, 'fmt', True, True)
+
     # messages layer and request helpers
     from pyramid_layer.message import render_messages
 

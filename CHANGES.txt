@@ -8,6 +8,8 @@ CHANGES
 
 - Added status messages
 
+- Added formatters
+
 
 0.2 (11-01-2012)
 ----------------

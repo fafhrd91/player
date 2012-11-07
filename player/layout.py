@@ -21,9 +21,9 @@ except ImportError: # pragma no cover
     from ordereddict import OrderedDict
 
 
-log = logging.getLogger('pyramid_layer')
+log = logging.getLogger('player')
 
-LAYOUT_ID = 'pyramid_layer:layout'
+LAYOUT_ID = 'player:layout'
 
 LayoutInfo = namedtuple(
     'LayoutInfo', 'name layout view original renderer intr')
@@ -114,7 +114,7 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
       config.add_layout('page', parent='page', renderer='my_package:template/page.pt')
 
 
-    To use layout with pyramid view use ``wrapper=pyramid_layer.wrap_layout()``
+    To use layout with pyramid view use ``wrapper=player.wrap_layout()``
 
     Example:
 
@@ -122,11 +122,11 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
 
       config.add_view('
           index.html',
-          wrapper=pyramid_layer.wrap_layout(),
+          wrapper=player.wrap_layout(),
           renderer = '...')
 
     in this example '' layout is beeing used. You can specify specific layout
-    name for pyramid view ``pyramid_layer.wrap_layout('page')``
+    name for pyramid view ``player.wrap_layout('page')``
 
     """
     (scope, module,
@@ -137,7 +137,7 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
 
     discr = (LAYOUT_ID, name, context, route_name)
 
-    intr = Introspectable(LAYOUT_ID, discr, name, 'pyramid_layer_layout')
+    intr = Introspectable(LAYOUT_ID, discr, name, 'player_layout')
 
     intr['name'] = name
     intr['context'] = context
@@ -296,13 +296,13 @@ def wrap_layout(layout=''):
     .. code-block:: python
 
       config = Configurator()
-      config.include('pyramid_layer')
+      config.include('player')
 
       config.add_layout('page')
 
       config.add_view(
           'index.html',
-          wrapper=pyramid_layer.wrap_layout())
+          wrapper=player.wrap_layout())
 
     """
     lname = '#layout-{0}'.format(layout)

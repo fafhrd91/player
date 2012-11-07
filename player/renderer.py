@@ -4,7 +4,7 @@ from pyramid.renderers import RendererHelper
 
 from .layer import ID_LAYER
 
-ID_TEMPLATE = 'pyramid_layer:template'
+ID_TEMPLATE = 'player:template'
 
 
 class RendererNotFound(ValueError):

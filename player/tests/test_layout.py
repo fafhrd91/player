@@ -24,7 +24,7 @@ class TestLayout(BaseTestCase):
         shutil.rmtree(self.dir)
 
     def test_layout_register_simple(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         self.config.add_layout('test')
 
@@ -34,7 +34,7 @@ class TestLayout(BaseTestCase):
         self.assertIs(layout.original, None)
 
     def test_layout_register_custom_class(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         class MyLayout(object):
             pass
@@ -45,7 +45,7 @@ class TestLayout(BaseTestCase):
         self.assertIs(layout.original, MyLayout)
 
     def test_layout_simple_declarative(self):
-        from pyramid_layer.layout import LayoutRenderer
+        from player.layout import LayoutRenderer
 
         class Layout(View):
             def __call__(self):
@@ -53,7 +53,7 @@ class TestLayout(BaseTestCase):
 
         self.config.add_layout(
             'test', context=Context,
-            renderer='pyramid_layer:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.pt')
 
         renderer = LayoutRenderer('test')
         self.request.wrapped_body = 'View: test'
@@ -64,10 +64,10 @@ class TestLayout(BaseTestCase):
 
     def test_layout_pyramid_declarative(self):
         from pyramid.config import Configurator
-        from pyramid_layer.layout import ILayout
+        from player.layout import ILayout
 
         config = Configurator(autocommit=True)
-        config.include('pyramid_layer')
+        config.include('player')
         config.commit()
 
         class Layout(View):
@@ -82,20 +82,20 @@ class TestLayout(BaseTestCase):
         self.assertIs(layout_factory.original, Layout)
 
     def test_layout_simple_notfound(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         v = View(Context(Context()), self.request)
         layout, context = query_layout(object(), v.context, self.request,'test')
         self.assertTrue(layout is None)
 
     def test_layout_simple_chain_multi_level(self):
-        from pyramid_layer.layout import LayoutRenderer
+        from player.layout import LayoutRenderer
 
         self.config.add_layout(
-            'test', parent='.', renderer='pyramid_layer:tests/test-layout.pt')
+            'test', parent='.', renderer='player:tests/test-layout.pt')
         self.config.add_layout(
             '', context=Root, parent=None,
-            renderer='pyramid_layer:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.pt')
 
         root = Root()
         context = Context(root)
@@ -108,14 +108,14 @@ class TestLayout(BaseTestCase):
         self.assertIn('<html><div>View: test</div>\n</html>', text_(res))
 
     def test_layout_chain_same_layer_id_on_different_levels(self):
-        from pyramid_layer.layout import LayoutRenderer
+        from player.layout import LayoutRenderer
 
         self.config.add_layout(
             '', context=Context, parent='.',
-            renderer='pyramid_layer:tests/test-layout.pt')
+            renderer='player:tests/test-layout.pt')
         self.config.add_layout(
             '', context=Root, parent=None,
-            renderer='pyramid_layer:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.pt')
 
         root = Root()
         context1 = Context2(root)
@@ -130,12 +130,12 @@ class TestLayout(BaseTestCase):
 
     def test_layout_chain_parent_notfound(self):
         self.config.add_layout('', context=Context, parent='page',
-                               renderer='pyramid_layer:tests/test-layout.pt')
+                               renderer='player:tests/test-layout.pt')
 
         root = Root()
         context = Context(root)
 
-        from pyramid_layer.layout import LayoutRenderer
+        from player.layout import LayoutRenderer
         renderer = LayoutRenderer('')
         self.request.wrapped_body = 'View: test'
         self.request.wrapped_response = self.request.response
@@ -144,7 +144,7 @@ class TestLayout(BaseTestCase):
         self.assertTrue('<div>View: test</div>' in text_(res))
 
     def test_layout_for_route(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         self.config.add_route('test-route', '/test/', use_global_views=False)
         self.config.add_layout(
@@ -161,7 +161,7 @@ class TestLayout(BaseTestCase):
         self.assertIsNotNone(layout)
 
     def test_layout_for_route_global_views(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         self.config.add_route('test-route', '/test/', use_global_views=False)
         self.config.add_layout('test', use_global_views=True)
@@ -174,7 +174,7 @@ class TestLayout(BaseTestCase):
         self.assertIsNotNone(layout)
 
     def test_layout_root(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         class Root1(object):
             pass
@@ -221,7 +221,7 @@ class TestLayout(BaseTestCase):
         context2.__parent__ = context1
         context3.__parent__ = context2
 
-        from pyramid_layer.layout import query_layout_chain
+        from player.layout import query_layout_chain
         chain = query_layout_chain(root, context1, self.request, 'l1')
 
         self.assertEqual(len(chain), 1)
@@ -240,13 +240,13 @@ class TestLayout(BaseTestCase):
         self.assertIs(chain[1][0].original, Layout2)
         self.assertIs(chain[2][0].original, Layout1)
 
-    @mock.patch('pyramid_layer.layout.venusian')
+    @mock.patch('player.layout.venusian')
     def test_wrap_layout(self, m_ven):
-        from pyramid_layer.layout import wrap_layout, LayoutRenderer
+        from player.layout import wrap_layout, LayoutRenderer
 
         mod = Context()
-        mod.__name__ = 'pyramid_layer'
-        mod.__file__ = 'pyramid_layer'
+        mod.__name__ = 'player'
+        mod.__file__ = 'player'
         m_ven.getFrameInfo.return_value = ('1',mod,'3','4','5')
 
         lname = wrap_layout('page')
@@ -270,7 +270,7 @@ class TestLayout(BaseTestCase):
         self.assertIs(renderer, renderer2)
 
     def test_layout_renderer_layout_info(self):
-        from pyramid_layer.layout import query_layout, LayoutRenderer
+        from player.layout import query_layout, LayoutRenderer
 
         self.config.add_layout('test')
         self.config.add_layout('test2', view=View)
@@ -287,7 +287,7 @@ class TestLayout(BaseTestCase):
         self.assertIn('"layout-factory": "test_layout.View"', res)
 
     def test_query_layout_no_request_iface(self):
-        from pyramid_layer.layout import query_layout
+        from player.layout import query_layout
 
         self.config.add_layout('test')
         l1 = query_layout(Root(), Context(), self.request, 'test')[0]
@@ -296,9 +296,9 @@ class TestLayout(BaseTestCase):
         l2 = query_layout(Root(), Context(), self.request, 'test')[0]
         self.assertIs(l1, l2)
 
-    @mock.patch('pyramid_layer.layout.query_layout')
+    @mock.patch('player.layout.query_layout')
     def test_query_layout_chain(self, m):
-        from pyramid_layer.layout import query_layout_chain
+        from player.layout import query_layout_chain
 
         m.return_value = (None, None)
         chain = query_layout_chain(Root(), Context(), self.request)

@@ -1,12 +1,12 @@
-pyramid_layer
-=============
+player
+======
 
-.. image :: https://secure.travis-ci.org/fafhrd91/pyramid_layer.png 
-  :target:  https://secure.travis-ci.org/fafhrd91/pyramid_layer
+.. image :: https://secure.travis-ci.org/fafhrd91/player.png 
+  :target:  https://secure.travis-ci.org/fafhrd91/player
 
-pyramid_layer allows to address templates with two parameters, 
+player allows to address templates with two parameters, 
 category and name. Also it is possible to use set of directories
-for each layer, in that case `pyramid_layer` searches templates
+for each layer, in that case `player` searches templates
 in each directory. It allows to override templates without changing
 code. For example form library can define layer `field`::
 
@@ -34,7 +34,7 @@ Layer can to be defined with `add_layer` config directive:
 .. code-block:: python
 
     >> config = Configurator()
-    .. config.include('pyramid_layer')
+    .. config.include('player')
     ..
     .. config.add_layer('form', path='./path_to_form_dirctory/form/')
 
@@ -64,7 +64,7 @@ or :
 
 
 It is possible to run python code before rendering template. 
-There are `add_tmpl_filter` directive and `pyramid_layer.tmpl_filter` 
+There are `add_tmpl_filter` directive and `player.tmpl_filter` 
 decorator:
 
 .. code-block:: python
@@ -78,9 +78,9 @@ or:
 
 .. code-block:: python
 
-    >> import pyramid_layer
+    >> import player
 
-    >> @pyramid_layer.tmpl_filter('form:actions', name='custom')
+    >> @player.tmpl_filter('form:actions', name='custom')
     .. def form_actions(context, request):
     ..     return {'url': ...}
 
@@ -122,7 +122,7 @@ and ::
 Request method
 --------------
 
-`pyramid_layer` also provides request method `render_tmpl`. It acccepts
+`player` also provides request method `render_tmpl`. It acccepts
 path::
 
    ..  ${structure: request.render_tmpl('form:actions')
@@ -139,4 +139,4 @@ player
 License
 -------
 
-pyramid_layer is offered under the BSD license.
+player is offered under the BSD license.

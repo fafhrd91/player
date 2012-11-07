@@ -1,7 +1,7 @@
 """ formatters """
 from pyramid.registry import Introspectable
 
-ID_FORMATTER = 'pyramid_layer:formatter'
+ID_FORMATTER = 'player:formatter'
 
 
 def add_formatter(cfg, name, callable):

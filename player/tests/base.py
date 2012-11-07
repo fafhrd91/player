@@ -27,39 +27,32 @@ class BaseTestCase(TestCase):
 
     def make_request(self, registry=None,
                      environ=None, request_iface=IRequest, **kwargs):
+        if registry is None:
+            registry = self.registry
         if environ is None:
             environ=self._environ
         request = testing.DummyRequest(environ=dict(environ), **kwargs)
         request.request_iface = IRequest
-        if registry is None:
-            registry = self.registry
-        if registry is not None:
-            request.registry = registry
-            request._set_extensions(registry.getUtility(IRequestExtensions))
-
+        request.registry = registry
+        request._set_extensions(registry.getUtility(IRequestExtensions))
         return request
 
-    def init_extensions(self):
+    def init_extensions(self, registry):
         from pyramid.config.factories import _RequestExtensions
 
-        exts = self.registry.queryUtility(IRequestExtensions)
+        exts = registry.queryUtility(IRequestExtensions)
         if exts is None:
             exts = _RequestExtensions()
-            self.registry.registerUtility(exts, IRequestExtensions)
+            registry.registerUtility(exts, IRequestExtensions)
 
     def init_pyramid(self):
-        self.request = request = self.make_request()
         self.config = testing.setUp(
-            request=request,
-            settings=self._settings,
-            autocommit=self._auto_include)
+            settings=self._settings, autocommit=self._auto_include)
+        self.init_extensions(self.config.registry)
         self.config.get_routes_mapper()
         self.registry = self.config.registry
-        self.init_extensions()
-
-        self.request.registry = self.registry
-        self.request._set_extensions(
-            self.registry.getUtility(IRequestExtensions))
 
         if self._include:
-            self.config.include('pyramid_layer')
+            self.config.include('player')
+
+        self.request = self.make_request()

@@ -1,13 +1,13 @@
-# pyramid_layer public api
+# player public api
 
 __all__ = ['tmpl_filter', 'wrap_layout', 'add_message',
            'render', 'RendererNotFound', 'includeme']
 
-from pyramid_layer.layer import tmpl_filter
-from pyramid_layer.layout import wrap_layout
-from pyramid_layer.renderer import render
-from pyramid_layer.renderer import RendererNotFound
-from pyramid_layer.message import add_message
+from player.layer import tmpl_filter
+from player.layout import wrap_layout
+from player.renderer import render
+from player.renderer import RendererNotFound
+from player.message import add_message
 
 
 def includeme(cfg):
@@ -16,10 +16,10 @@ def includeme(cfg):
     from pyramid.settings import aslist
     from pyramid.exceptions import ConfigurationError
 
-    from pyramid_layer.renderer import lt_renderer_factory
-    from pyramid_layer.layer import add_layer, add_layers, change_layers_order
-    from pyramid_layer.layer import add_tmpl_filter
-    from pyramid_layer.layout import add_layout, set_layout_data
+    from player.renderer import lt_renderer_factory
+    from player.layer import add_layer, add_layers, change_layers_order
+    from player.layer import add_tmpl_filter
+    from player.layout import add_layout, set_layout_data
 
     # config directives
     cfg.add_directive('add_layer', add_layer)
@@ -47,7 +47,7 @@ def includeme(cfg):
 
     if order:
         cfg.action(
-            'pyramid_layer.order',
+            'player.order',
             change_layers_order, (cfg, order), order=999999+1)
 
     # global custom layer
@@ -60,21 +60,21 @@ def includeme(cfg):
                 "Directory is required for layer.custom setting: %s"%custom)
 
         cfg.action(
-            'pyramid_layer.custom',
+            'player.custom',
             add_layers, (cfg, 'layer_custom', custom), order=999999+2)
 
     # formatters
-    from pyramid_layer import formatter
+    from player import formatter
     cfg.add_directive('add_formatter', formatter.add_formatter)
     cfg.add_request_method(formatter.formatters, 'fmt', True, True)
 
     # messages layer and request helpers
-    from pyramid_layer.message import render_messages
+    from player.message import render_messages
 
-    cfg.add_layer('message', path='pyramid_layer:templates/message/')
+    cfg.add_layer('message', path='player:templates/message/')
 
     cfg.add_request_method(add_message, 'add_message')
     cfg.add_request_method(render_messages, 'render_messages')
 
     # scan
-    cfg.scan('pyramid_layer')
+    cfg.scan('player')

@@ -23,11 +23,9 @@ class TestFormatter(BaseTestCase):
 
         self.config.add_formatter('simple', simple)
 
-        request = self.make_request()
-    
-        simple = request.fmt['simple']
-        self.assertIs(simple, request.fmt['simple'])
-        self.assertIs(request.fmt['simple'], request.fmt.simple)
+        simple = self.request.fmt['simple']
+        self.assertIs(simple, self.request.fmt['simple'])
+        self.assertIs(self.request.fmt['simple'], self.request.fmt.simple)
 
         request = self.make_request()
         self.assertIsNot(simple, request.fmt.simple)
@@ -47,7 +45,7 @@ class TestFormatter(BaseTestCase):
             """ """
 
         config = Configurator()
-        config.include('ptahform')
+        config.include('player')
 
         config.add_formatter('test', simple1)
         config.add_formatter('test', simple2)
@@ -60,7 +58,7 @@ class TestFormatter(BaseTestCase):
 
         self.config.add_formatter('simple', simple)
 
-        from pyramid_layer.formatter import ID_FORMATTER
+        from player.formatter import ID_FORMATTER
 
         discr = (ID_FORMATTER, 'simple')
         intr = self.config.introspector.get(ID_FORMATTER, discr)

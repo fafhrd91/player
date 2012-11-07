@@ -7,9 +7,9 @@ from pyramid.exceptions import ConfigurationError
 from pyramid.interfaces import IViewMapperFactory
 from pyramid.config.views import DefaultViewMapper
 
-log = logging.getLogger('pyramid_layer')
+log = logging.getLogger('player')
 
-ID_LAYER = 'pyramid_layer:layer'
+ID_LAYER = 'player:layer'
 
 
 def add_layer(cfg, layer, name='', path='', description=''):
@@ -98,7 +98,7 @@ class tmpl_filter(object):
             add_tmpl_filter(
                 cfg, self.template, ob, self.name, self.description)
 
-        info = venusian.attach(wrapped, callback, category='pyramid_layer')
+        info = venusian.attach(wrapped, callback, category='player')
 
         return wrapped
 

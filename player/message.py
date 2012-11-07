@@ -1,6 +1,6 @@
 """ simple messages """
 from pyramid.compat import escape
-from pyramid_layer import render, tmpl_filter
+from player import render, tmpl_filter
 
 
 def add_message(request, msg, type='info'):

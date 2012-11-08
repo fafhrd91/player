@@ -6,7 +6,7 @@ env:
     - PYTHON_VER=3.3
 
 install:
-  - python setup.py develop
+  - python setup.py develop --allow-hosts='pypi.python.org'
 
 script: python setup.py test
 

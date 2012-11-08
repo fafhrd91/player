@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 version='0.3'
 
 install_requires = ['setuptools',
-                    'pyramid >= 1.4.0a3',
+                    'pyramid >= 1.4a3',
 ]
 
 if sys.version_info[:2] == (2, 6):

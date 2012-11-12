@@ -352,7 +352,7 @@ class TestLayout(BaseTestCase):
 
         self.assertFalse(hasattr(request, '__layout_data__'))
 
-        request.set_layout_data('test', 123)
+        request.set_layout_data(test=123)
         self.assertTrue(hasattr(request, '__layout_data__'))
         self.assertIn('test', request.__layout_data__)
         self.assertEqual(request.__layout_data__['test'], 123)

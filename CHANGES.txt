@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+0.4 (Unreleased)
+================
+
+- `set_layout_data` accepts keyword arguments
+
+- Added `-c` argument to `player` console script, it allows to customize templates
+
+
 0.3 (11-07-2012)
 ----------------
 

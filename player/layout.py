@@ -327,10 +327,10 @@ def wrap_layout(layout=''):
     return lname
 
 
-def set_layout_data(request, name, val):
+def set_layout_data(request, **kw):
     try:
         data = request.__layout_data__
     except:
         data = request.__layout_data__ = {}
 
-    data[name] = val
+    data.update(kw)

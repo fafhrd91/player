@@ -1,5 +1,8 @@
+import os
 import mock
 import sys
+import shutil
+import tempfile
 from pyramid.compat import NativeIO
 from player import script as layer
 from player.layer import ID_LAYER
@@ -12,10 +15,12 @@ class TestPlayerCommand(BaseTestCase):
     def setUp(self):
         super(TestPlayerCommand, self).setUp()
 
+        self.dir = tempfile.mkdtemp()
         self.stdout = sys.stdout
         sys.stdout = self.out = NativeIO()
 
     def tearDown(self):
+        shutil.rmtree(self.dir)
         sys.stdout = self.stdout
         super(TestPlayerCommand, self).tearDown()
 
@@ -28,14 +33,15 @@ class TestPlayerCommand(BaseTestCase):
         layer.main()
 
         val = self.out.getvalue()
-        self.assertIn('[-h] [-l] [-lt] config [asset [asset ...]]', val)
+        self.assertIn('[-l [LAYERS [LAYERS ...]]]', val)
+        self.assertIn('[-lt [TEMPLATES [TEMPLATES ...]]]', val)
 
     @mock.patch('player.script.bootstrap')
     def test_list_categories_no_layers(self, m_bs):
         m_bs.return_value = {'registry': self.registry}
         self.registry[ID_LAYER] = {}
 
-        sys.argv[:] = ['player', '-l', 'player.ini']
+        sys.argv[:] = ['player', 'player.ini', '-l']
 
         layer.main()
 
@@ -50,7 +56,7 @@ class TestPlayerCommand(BaseTestCase):
         self.config.add_layer(
             'test2', path='player:tests/bundle/')
 
-        sys.argv[:] = ['player', '-l', 'player.ini']
+        sys.argv[:] = ['player', 'player.ini', '-l']
 
         layer.main()
 
@@ -66,7 +72,7 @@ class TestPlayerCommand(BaseTestCase):
         self.config.add_layer(
             'test2', path='player:tests/bundle/')
 
-        sys.argv[:] = ['player', '-l', 'player.ini', 'test2']
+        sys.argv[:] = ['player', 'player.ini', '-l', 'test2']
 
         layer.main()
 
@@ -87,7 +93,7 @@ class TestPlayerCommand(BaseTestCase):
         self.config.add_tmpl_filter(
             'test1:actions', test)
 
-        sys.argv[:] = ['player', '-lt', 'player.ini']
+        sys.argv[:] = ['player', 'player.ini', '-lt']
 
         layer.main()
 
@@ -105,7 +111,7 @@ class TestPlayerCommand(BaseTestCase):
         self.config.add_layer(
             'test2', path='player:tests/bundle/')
 
-        sys.argv[:] = ['player', '-lt', 'player.ini', 'test1']
+        sys.argv[:] = ['player', 'player.ini', '-lt', 'test1']
 
         layer.main()
 
@@ -120,9 +126,71 @@ class TestPlayerCommand(BaseTestCase):
         m_bs.return_value = {'registry': self.registry}
         self.registry[ID_LAYER] = {}
 
-        sys.argv[:] = ['player', '-lt', 'player.ini']
+        sys.argv[:] = ['player', 'player.ini', '-lt']
 
         layer.main()
 
         val = self.out.getvalue()
         self.assertIn('No layers are found.', val)
+
+    @mock.patch('player.script.bootstrap')
+    def test_customize_template_fmt_bad(self, m_bs):
+        m_bs.return_value = {'registry': self.registry}
+        self.registry[ID_LAYER] = {}
+
+        sys.argv[:] = ['player', 'player.ini', '-c', 'test', './']
+
+        layer.main()
+
+        val = self.out.getvalue()
+        self.assertIn('Template format is wrong.', val)
+
+    @mock.patch('player.script.bootstrap')
+    def test_customize_template_no_layers(self, m_bs):
+        m_bs.return_value = {'registry': self.registry}
+        self.registry[ID_LAYER] = {}
+        sys.argv[:] = ['player', 'player.ini', '-c', 'test:template.lt', './']
+
+        layer.main()
+
+        val = self.out.getvalue()
+        self.assertIn('Layer "test" could not be found.', val)
+
+    @mock.patch('player.script.bootstrap')
+    def test_customize_template_no_template(self, m_bs):
+        m_bs.return_value = {'registry': self.registry}
+        self.config.add_layer(
+            'test', path='player:tests/dir1/')
+
+        sys.argv[:] = ['player', 'player.ini', '-c', 'test:template.lt', './']
+
+        layer.main()
+
+        val = self.out.getvalue()
+        self.assertIn('Template "test:template.lt" could not be found.', val)
+
+    @mock.patch('player.script.bootstrap')
+    def test_customize_template_no_dest(self, m_bs):
+        m_bs.return_value = {'registry': self.registry}
+        self.config.add_layer(
+            'test', path='player:tests/dir1/')
+
+        sys.argv[:] = ['player', 'player.ini', '-c',
+                       'test:view.lt', './blah-blah-blah']
+
+        layer.main()
+
+        val = self.out.getvalue()
+        self.assertIn('Destination directory is not found.', val)
+
+    @mock.patch('player.script.bootstrap')
+    def test_customize_success(self, m_bs):
+        m_bs.return_value = {'registry': self.registry}
+        self.config.add_layer(
+            'test', path='player:tests/dir1/')
+
+        sys.argv[:] = ['player', 'player.ini', '-c', 'test:view.lt', self.dir]
+
+        layer.main()
+
+        self.assertTrue(os.path.join(self.dir, 'view.pt'))

@@ -41,7 +41,7 @@ def add_layer(cfg, layer, name='', path='', description=''):
     layers.insert(0, intr)
 
     cfg.action(discr, introspectables=(intr,))
-    log.info("Add layer: %s path:%s"%(layer, directory))
+    log.info("Add layer: %s path:%s"%(layer, path))
 
 
 def add_layers(cfg, name='', path='', description=''):

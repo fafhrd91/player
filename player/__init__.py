@@ -1,10 +1,10 @@
 # player public api
 
-__all__ = ['tmpl_filter', 'wrap_layout', 'add_message',
+__all__ = ['tmpl_filter', 'layout', 'wrap_layout', 'add_message',
            'render', 'RendererNotFound', 'includeme']
 
 from player.layer import tmpl_filter
-from player.layout import wrap_layout
+from player.layout_impl import layout, wrap_layout
 from player.renderer import render
 from player.renderer import RendererNotFound
 from player.message import add_message
@@ -19,7 +19,7 @@ def includeme(cfg):
     from player.renderer import lt_renderer_factory
     from player.layer import add_layer, add_layers, change_layers_order
     from player.layer import add_tmpl_filter
-    from player.layout import add_layout, set_layout_data
+    from player.layout_impl import add_layout, set_layout_data
 
     # config directives
     cfg.add_directive('add_layer', add_layer)
@@ -35,6 +35,9 @@ def includeme(cfg):
 
     # renderer factory
     cfg.add_renderer('.lt', lt_renderer_factory)
+
+    # layout renderer
+    cfg.add_renderer('player:layout', layout)
 
     # order
     settings = cfg.get_settings()

@@ -212,54 +212,17 @@ class LayoutRenderer(object):
 
         return content
 
-    def view_info(self, discr, context, request, content):
-        introspector = request.registry.introspector
-
-        template = 'unknown'
-        intr = introspector.get('templates', discr)
-        if intr is not None:
-            template = intr['name']
-
-        intr = introspector.get('views', discr)
-        if intr is None:
-            return content
-
-        view = intr['callable']
-
-        data = OrderedDict(
-            (('name', intr['name']),
-             ('route-name', intr['route_name']),
-             ('view-factory', '%s.%s'%(view.__module__, view.__name__)),
-             ('python-module', inspect.getmodule(view).__name__),
-             ('python-module-location', inspect.getsourcefile(view)),
-             ('python-module-line', inspect.getsourcelines(view)[-1]),
-             ('renderer', template),
-             ('context', '%s.%s'%(context.__class__.__module__,
-                                  context.__class__.__name__)),
-             ('context-path', request.resource_url(context)),
-             ))
-
-        content = text_('\n<!-- view:\n%s \n-->\n'\
-                        '<div style="border: 2px solid red">%s</div>')%(
-            json.dumps(data, indent=2), content)
-
-        return content
-
-    def __call__(self, context, request):
+    def __call__(self, context, request, text=False):
         chain = query_layout_chain(request.root, context, request, self.layout)
         if not chain:
             log.warning("Can't find layout '%s' for context '%s'",
                         self.layout, context)
             return request.wrapped_response
 
-        if isinstance(request.wrapped_response, HTTPException):
+        if isinstance(getattr(request,'wrapped_response',None), HTTPException):
             return request.wrapped_response
 
         content = text_(request.wrapped_body, 'utf-8')
-
-        debug = getattr(request, '__layout_debug__', False)
-        if debug:
-            content = self.view_info(debug, context, request, content)
 
         value = getattr(request, '__layout_data__', None)
         if value is None:
@@ -279,9 +242,12 @@ class LayoutRenderer(object):
 
             content = layout.renderer.render(value, system, request)
 
-            if debug:
+            if getattr(request, '__layout_debug__', False):
                 content = self.layout_info(
                     layout, layoutcontext, request, content)
+
+        if text:
+            return content
 
         request.response.text = content
         return request.response
@@ -334,3 +300,29 @@ def set_layout_data(request, **kw):
         data = request.__layout_data__ = {}
 
     data.update(kw)
+
+
+class layout(RendererHelper):
+
+    package = None
+    type = 'player:layout'
+
+    def __init__(self, name, renderer):
+        self.name = renderer
+        self.layout_name = name
+
+    def render(self, value, system_values, request=None):
+        context = system_values.get('context', None)
+        try:
+            layout = self.layout
+            renderer = self.renderer
+            registry = self.registry
+        except AttributeError:
+            layout = self.layout = LayoutRenderer(self.layout_name)
+            registry = self.registry = request.registry
+            renderer = self.renderer = RendererHelper(
+                self.name, registry=registry)
+
+        request.wrapped_body = renderer.render(value, system_values, request)
+
+        return layout(context, request, True)

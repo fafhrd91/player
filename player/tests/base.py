@@ -1,12 +1,7 @@
-import sys
+from unittest import TestCase
 from pyramid import testing
 from pyramid.interfaces import IRequest
 from pyramid.interfaces import IRequestExtensions
-
-if sys.version_info[:2] == (2, 6):
-    from unittest2 import TestCase
-else:
-    from unittest import TestCase
 
 
 class BaseTestCase(TestCase):

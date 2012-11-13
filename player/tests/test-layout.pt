@@ -1,1 +1,1 @@
-<div>${structure: wrapped_content}</div>
+<div>${structure: content}</div>

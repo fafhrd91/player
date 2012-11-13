@@ -1,5 +1,4 @@
 import os
-import sys
 from setuptools import setup, find_packages
 
 version='0.4'
@@ -7,12 +6,6 @@ version='0.4'
 install_requires = ['setuptools',
                     'pyramid >= 1.4a3',
 ]
-
-if sys.version_info[:2] == (2, 6):
-    install_requires.extend((
-        'argparse',
-        'ordereddict',
-        'unittest2'))
 
 tests_require = install_requires + ['nose', 'mock']
 
@@ -28,7 +21,6 @@ setup(name='player',
           "License :: OSI Approved :: MIT License",
           "Intended Audience :: Developers",
           "Programming Language :: Python",
-          "Programming Language :: Python :: 2.6",
           "Programming Language :: Python :: 2.7",
           "Programming Language :: Python :: 3.2",
           "Programming Language :: Python :: 3.3",

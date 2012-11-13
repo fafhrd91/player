@@ -3,9 +3,9 @@ import sys
 import json
 import logging
 import random
-import inspect
 import venusian
 from collections import namedtuple
+from collections import OrderedDict
 from zope.interface import providedBy, Interface
 from pyramid.compat import text_, string_types
 from pyramid.config.views import DefaultViewMapper
@@ -13,13 +13,8 @@ from pyramid.httpexceptions import HTTPException
 from pyramid.location import lineage
 from pyramid.registry import Introspectable
 from pyramid.renderers import RendererHelper
-from pyramid.interfaces import IRequest, IRouteRequest, IView, IViewClassifier
-
-try:
-    from collections import OrderedDict
-except ImportError: # pragma no cover
-    from ordereddict import OrderedDict
-
+from pyramid.interfaces import IView, IViewClassifier
+from pyramid.interfaces import IRequest, IResponse, IRouteRequest
 
 log = logging.getLogger('player')
 
@@ -114,7 +109,7 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
       config.add_layout('page', parent='page', renderer='my_package:template/page.pt')
 
 
-    To use layout with pyramid view use ``wrapper=player.wrap_layout()``
+    To use layout with pyramid view use ``renderer=player.layout('my_pkg:template/page.pt')``
 
     Example:
 
@@ -122,11 +117,10 @@ def add_layout(cfg, name='', context=None, root=None, parent=None,
 
       config.add_view('
           index.html',
-          wrapper=player.wrap_layout(),
-          renderer = '...')
+          renderer = player.layout('...'))
 
     in this example '' layout is beeing used. You can specify specific layout
-    name for pyramid view ``player.wrap_layout('page')``
+    name for pyramid view ``player.layout('page', 'layout name')``
 
     """
     (scope, module,
@@ -217,10 +211,10 @@ class LayoutRenderer(object):
         if not chain:
             log.warning("Can't find layout '%s' for context '%s'",
                         self.layout, context)
-            return request.wrapped_response
+            return getattr(request, 'wrapped_response', request.wrapped_body)
 
         if isinstance(getattr(request,'wrapped_response',None), HTTPException):
-            return request.wrapped_response
+            return getattr(request, 'wrapped_response', request.wrapped_body)
 
         content = text_(request.wrapped_body, 'utf-8')
 
@@ -231,6 +225,8 @@ class LayoutRenderer(object):
         for layout, layoutcontext in chain:
             if layout.view is not None:
                 vdata = layout.view(layoutcontext, request)
+                if IResponse.providedBy(vdata):
+                    return vdata
                 if vdata is not None:
                     value.update(vdata)
 
@@ -238,6 +234,7 @@ class LayoutRenderer(object):
                       'renderer_info': layout.renderer,
                       'context': layoutcontext,
                       'request': request,
+                      'content': content,
                       'wrapped_content': content}
 
             content = layout.renderer.render(value, system, request)
@@ -305,24 +302,35 @@ def set_layout_data(request, **kw):
 class layout(RendererHelper):
 
     package = None
+    renderer = None
     type = 'player:layout'
 
-    def __init__(self, name, renderer):
-        self.name = renderer
-        self.layout_name = name
+    def __init__(self, name='', layout=''):
+        self.name = name
+        self.layout_name = layout
 
     def render(self, value, system_values, request=None):
+        renderer = self.renderer
         context = system_values.get('context', None)
         try:
             layout = self.layout
-            renderer = self.renderer
             registry = self.registry
         except AttributeError:
             layout = self.layout = LayoutRenderer(self.layout_name)
             registry = self.registry = request.registry
-            renderer = self.renderer = RendererHelper(
-                self.name, registry=registry)
+            if self.name:
+                renderer = self.renderer = RendererHelper(
+                    self.name, registry=registry)
 
-        request.wrapped_body = renderer.render(value, system_values, request)
+        if renderer:
+            value = renderer.render(value, system_values, request)
+
+        request.wrapped_body = value
 
         return layout(context, request, True)
+
+    def render_to_response(self, value, system_values, request=None):
+        result = self.render(value, system_values, request=request)
+        if IResponse.providedBy(result):
+            return result
+        return self._make_response(result, request)

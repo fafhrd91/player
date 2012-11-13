@@ -321,7 +321,7 @@ class TestLayout(BaseTestCase):
                                renderer='player:tests/test-layout.pt')
         self.config.add_view(
             name='view.html',
-            renderer=player.layout('test', 'player:tests/dir1/view.pt'))
+            renderer=player.layout('player:tests/dir1/view.pt', 'test'))
 
         from pyramid.view import render_view
 
@@ -329,6 +329,37 @@ class TestLayout(BaseTestCase):
         res2 = render_view(Context(), self.request, 'view.html')
         self.assertEqual(res1, res2)
         self.assertEqual('<div><h1>Test</h1></div>', res1.strip())
+
+    def test_layout_renderer_no_template(self):
+        import player
+        from pyramid.view import render_view
+
+        def view(request):
+            return 'test'
+
+        self.config.add_view(
+            name='view.html', view=view, renderer=player.layout())
+        self.config.add_layout(
+            '', view=View, renderer='player:tests/test-layout.pt')
+
+        res = render_view(Context(), self.request, 'view.html')
+        self.assertEqual('<div>test</div>', res.strip())
+
+    def test_layout_return_response(self):
+        import player
+        from pyramid.view import render_view_to_response
+        from pyramid.httpexceptions import HTTPFound
+
+        def view(request):
+            return HTTPFound(location='/')
+
+        self.config.add_view(
+            name='view.html', renderer=player.layout())
+        self.config.add_layout(
+            '', view=view, renderer='player:tests/test-layout.pt')
+
+        res = render_view_to_response(Context(), self.request, 'view.html')
+        self.assertIsInstance(res, HTTPFound)
 
     def test_layout_renderer_layout_info(self):
         from player.layout_impl import query_layout, LayoutRenderer

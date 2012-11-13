@@ -206,17 +206,13 @@ class LayoutRenderer(object):
 
         return content
 
-    def __call__(self, context, request, text=False):
+    def __call__(self, content, context, request):
         chain = query_layout_chain(request.root, context, request, self.layout)
         if not chain:
-            log.warning("Can't find layout '%s' for context '%s'",
-                        self.layout, context)
-            return getattr(request, 'wrapped_response', request.wrapped_body)
-
-        if isinstance(getattr(request,'wrapped_response',None), HTTPException):
-            return getattr(request, 'wrapped_response', request.wrapped_body)
-
-        content = text_(request.wrapped_body, 'utf-8')
+            log.warning(
+                "Can't find layout '%s' for context '%s'",
+                self.layout, context)
+            return content
 
         value = getattr(request, '__layout_data__', None)
         if value is None:
@@ -243,51 +239,7 @@ class LayoutRenderer(object):
                 content = self.layout_info(
                     layout, layoutcontext, request, content)
 
-        if text:
-            return content
-
-        request.response.text = content
-        return request.response
-
-
-class Data(object): pass
-
-
-def wrap_layout(layout=''):
-    """ Generate view name for pyramid view declaration.
-
-    .. code-block:: python
-
-      config = Configurator()
-      config.include('player')
-
-      config.add_layout('page')
-
-      config.add_view(
-          'index.html',
-          wrapper=player.wrap_layout())
-
-    """
-    lname = '#layout-{0}'.format(layout)
-
-    def callback(context, name, ob):
-        cfg = context.config.with_package(module)
-
-        renderer = cfg.registry.adapters.lookup(
-            (IViewClassifier, Interface, Interface), IView, name=lname)
-        if renderer is None:
-            cfg.registry.registerAdapter(
-                LayoutRenderer(layout),
-                (IViewClassifier, Interface, Interface), IView, lname)
-
-    (scope, module,
-     f_locals, f_globals, codeinfo) = venusian.getFrameInfo(sys._getframe(1))
-
-    if not hasattr(module, '__layer_data__'):
-        module.__layer_data__ = Data()
-
-    venusian.attach(module.__layer_data__, callback, category='player')
-    return lname
+        return content
 
 
 def set_layout_data(request, **kw):
@@ -325,9 +277,7 @@ class layout(RendererHelper):
         if renderer:
             value = renderer.render(value, system_values, request)
 
-        request.wrapped_body = value
-
-        return layout(context, request, True)
+        return layout(value, context, request)
 
     def render_to_response(self, value, system_values, request=None):
         result = self.render(value, system_values, request=request)

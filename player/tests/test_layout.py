@@ -59,10 +59,7 @@ class TestLayout(BaseTestCase):
             renderer='player:tests/test-layout-html.pt')
 
         renderer = LayoutRenderer('test')
-        self.request.wrapped_body = 'View: test'
-        self.request.wrapped_response = self.request.response
-
-        res = renderer(Context(), self.request).text
+        res = renderer('View: test', Context(), self.request)
         self.assertEqual(res.strip(), '<html>View: test</html>')
 
     def test_layout_pyramid_declarative(self):
@@ -102,13 +99,10 @@ class TestLayout(BaseTestCase):
 
         root = Root()
         context = Context(root)
-
         renderer = LayoutRenderer('test')
-        self.request.wrapped_body = 'View: test'
-        self.request.wrapped_response = self.request.response
 
-        res = renderer(context, self.request).text
-        self.assertIn('<html><div>View: test</div>\n</html>', text_(res))
+        res = renderer('View: test', context, self.request)
+        self.assertIn('<html><div>View: test</div></html>', text_(res))
 
     def test_layout_chain_same_layer_id_on_different_levels(self):
         from player.layout_impl import LayoutRenderer
@@ -123,13 +117,10 @@ class TestLayout(BaseTestCase):
         root = Root()
         context1 = Context2(root)
         context2 = Context(context1)
-
         renderer = LayoutRenderer('')
-        self.request.wrapped_body = 'View: test'
-        self.request.wrapped_response = self.request.response
 
-        res = renderer(context2, self.request).body
-        self.assertIn('<html><div>View: test</div>\n</html>\n', text_(res))
+        res = renderer('View: test', context2, self.request)
+        self.assertIn('<html><div>View: test</div></html>\n', text_(res))
 
     def test_layout_chain_parent_notfound(self):
         self.config.add_layout('', context=Context, parent='page',
@@ -140,10 +131,8 @@ class TestLayout(BaseTestCase):
 
         from player.layout_impl import LayoutRenderer
         renderer = LayoutRenderer('')
-        self.request.wrapped_body = 'View: test'
-        self.request.wrapped_response = self.request.response
 
-        res = renderer(context, self.request).body
+        res = renderer('View: test', context, self.request)
         self.assertTrue('<div>View: test</div>' in text_(res))
 
     def test_layout_for_route(self):
@@ -243,70 +232,25 @@ class TestLayout(BaseTestCase):
         self.assertIs(chain[1][0].original, Layout2)
         self.assertIs(chain[2][0].original, Layout1)
 
-    @mock.patch('player.layout_impl.venusian')
-    def test_wrap_layout(self, m_ven):
-        from player.layout_impl import wrap_layout, LayoutRenderer
-
-        mod = Context()
-        mod.__name__ = 'player'
-        mod.__file__ = 'player'
-        m_ven.getFrameInfo.return_value = ('1',mod,'3','4','5')
-
-        lname = wrap_layout('page')
-        self.assertEqual('#layout-page', lname)
-
-        context = Context()
-        context.config = self.config
-
-        cb = m_ven.attach.call_args[0][1]
-        cb(context, '', object())
-
-        renderer = self.registry.adapters.lookup(
-            (IViewClassifier, interface.Interface, interface.Interface),
-            IView, name=lname)
-        self.assertIsInstance(renderer, LayoutRenderer)
-
-        cb(context, '', object())
-        renderer2 = self.registry.adapters.lookup(
-            (IViewClassifier, interface.Interface, interface.Interface),
-            IView, name=lname)
-        self.assertIs(renderer, renderer2)
-
-    def test_layout_renderer_layout_http_exc(self):
-        from pyramid.httpexceptions import HTTPFound
+    @mock.patch('player.layout_impl.query_layout_chain')
+    def test_layout_renderer_no_layouts(self, m):
         from player.layout_impl import LayoutRenderer
-        self.config.add_layout('test')
-
-        found = HTTPFound()
-        self.request.wrapped_response = found
-
+        m.return_value = []
         rendr = LayoutRenderer('test')
-        res = rendr(View(), self.request)
 
-        self.assertIs(res, found)
+        o = object()
+        res = rendr(o, Context(), self.request)
 
-    def test_renderer_layout_no_layouts(self):
-        from player.layout_impl import LayoutRenderer
-
-        found = object()
-        self.request.wrapped_response = found
-
-        rendr = LayoutRenderer('test')
-        res = rendr(View(), self.request)
-
-        self.assertIs(res, found)
+        self.assertIs(res, o)
 
     def test_layout_renderer_layout_debug(self):
         from player.layout_impl import LayoutRenderer
         self.config.add_layout('test', view=View,
                                renderer='player:tests/test-layout.pt')
-
         self.request.__layout_debug__ = True
-        self.request.wrapped_body = '<h1>text</h1>'
-        self.request.wrapped_response = '<h1>text</h1>'
 
         rendr = LayoutRenderer('test')
-        res = rendr(Context(), self.request)
+        res = rendr('<h1>text</h1>', Context(), self.request)
 
         self.assertIn('<!-- layout:', str(res))
         self.assertIn('<h1>text</h1>', str(res))

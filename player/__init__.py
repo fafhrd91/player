@@ -1,10 +1,10 @@
 # player public api
 
-__all__ = ['tmpl_filter', 'layout', 'wrap_layout', 'add_message',
+__all__ = ['tmpl_filter', 'layout', 'add_message',
            'render', 'RendererNotFound', 'includeme']
 
 from player.layer import tmpl_filter
-from player.layout_impl import layout, wrap_layout
+from player.layout_impl import layout
 from player.renderer import render
 from player.renderer import RendererNotFound
 from player.message import add_message

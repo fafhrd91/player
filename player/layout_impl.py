@@ -9,11 +9,9 @@ from collections import OrderedDict
 from zope.interface import providedBy, Interface
 from pyramid.compat import text_, string_types
 from pyramid.config.views import DefaultViewMapper
-from pyramid.httpexceptions import HTTPException
 from pyramid.location import lineage
 from pyramid.registry import Introspectable
 from pyramid.renderers import RendererHelper
-from pyramid.interfaces import IView, IViewClassifier
 from pyramid.interfaces import IRequest, IResponse, IRouteRequest
 
 log = logging.getLogger('player')

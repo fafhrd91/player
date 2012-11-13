@@ -2,7 +2,7 @@
 import tempfile, shutil, mock
 from zope import interface
 from pyramid.compat import text_
-from pyramid.interfaces import IRequest, IRouteRequest, IView, IViewClassifier
+from pyramid.interfaces import IRequest, IRouteRequest
 
 from base import BaseTestCase
 

@@ -267,16 +267,16 @@ class TestLayout(BaseTestCase):
             name='view.html',
             renderer=player.layout('player:tests/dir1/view.pt', 'test'))
 
-        from pyramid.view import render_view
+        from pyramid.view import render_view_to_response
 
-        res1 = render_view(Context(), self.request, 'view.html')
-        res2 = render_view(Context(), self.request, 'view.html')
-        self.assertEqual(res1, res2)
-        self.assertEqual('<div><h1>Test</h1></div>', res1.strip())
+        res1 = render_view_to_response(Context(), self.request, 'view.html')
+        res2 = render_view_to_response(Context(), self.request, 'view.html')
+        self.assertEqual(res1.text, res2.text)
+        self.assertEqual('<div><h1>Test</h1></div>', res1.text.strip())
 
     def test_layout_renderer_no_template(self):
         import player
-        from pyramid.view import render_view
+        from pyramid.view import render_view_to_response
 
         def view(request):
             return 'test'
@@ -286,8 +286,8 @@ class TestLayout(BaseTestCase):
         self.config.add_layout(
             '', view=View, renderer='player:tests/test-layout.pt')
 
-        res = render_view(Context(), self.request, 'view.html')
-        self.assertEqual('<div>test</div>', res.strip())
+        res = render_view_to_response(Context(), self.request, 'view.html')
+        self.assertEqual('<div>test</div>', res.text.strip())
 
     def test_layout_return_response(self):
         import player

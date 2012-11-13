@@ -1,4 +1,6 @@
 import os
+import logging
+import multiprocessing
 from setuptools import setup, find_packages
 
 version='0.4'

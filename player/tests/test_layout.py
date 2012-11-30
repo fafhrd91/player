@@ -344,12 +344,10 @@ class TestLayout(BaseTestCase):
     def test_set_layout_data(self):
         request = self.request
 
-        self.assertFalse(hasattr(request, '__layout_data__'))
-
         request.set_layout_data(test=123)
-        self.assertTrue(hasattr(request, '__layout_data__'))
-        self.assertIn('test', request.__layout_data__)
-        self.assertEqual(request.__layout_data__['test'], 123)
+        self.assertTrue(hasattr(request, 'layout_data'))
+        self.assertIn('test', request.layout_data)
+        self.assertEqual(request.layout_data['test'], 123)
 
 
 class Context(object):

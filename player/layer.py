@@ -10,7 +10,6 @@ from pyramid.config.views import DefaultViewMapper
 log = logging.getLogger('player')
 
 ID_LAYER = 'player:layer'
-ID_LAYER_BY_NAME = 'player:layer-by-name'
 
 
 def add_layer(cfg, layer, name='', path='', description=''):
@@ -43,12 +42,6 @@ def add_layer(cfg, layer, name='', path='', description=''):
 
     cfg.action(discr, introspectables=(intr,))
     log.info("Add layer: %s path:%s"%(layer, path))
-
-
-def get_layer(name, registry):
-    storage = cfg.registry.setdefault(ID_LAYER, {})
-    layers = storage.setdefault(layer, [])
-    layers.insert(0, intr)
 
 
 def add_layers(cfg, name='', path='', description=''):

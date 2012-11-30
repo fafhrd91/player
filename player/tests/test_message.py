@@ -16,14 +16,14 @@ class TestStatusMessages(BaseTestCase):
 
         self.assertEqual(
             res,
-            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>\n','utf-8'))
+            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>','utf-8'))
 
     def test_messages_warning_msg(self):
         add_message(self.request, 'warning', 'warning')
 
         self.assertEqual(
             render_messages(self.request),
-            text_('<div class="alert alert-warning">\n  <a class="close" data-dismiss="alert">×</a>\n  warning\n</div>\n','utf-8'))
+            text_('<div class="alert alert-warning">\n  <a class="close" data-dismiss="alert">×</a>\n  warning\n</div>','utf-8'))
 
     def test_messages_error_msg(self):
         add_message(self.request, 'error', 'error')
@@ -79,7 +79,7 @@ class TestStatusMessages(BaseTestCase):
 
         self.assertEqual(
             render_messages(self.request),
-            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>\n','utf-8'))
+            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>','utf-8'))
 
         msg = render_messages(self.request)
         self.assertEqual(msg, '')
@@ -102,4 +102,4 @@ class TestStatusMessages(BaseTestCase):
 
         self.assertEqual(
             res,
-            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>\n','utf-8'))
+            text_('<div class="alert alert-info">\n  <a class="close" data-dismiss="alert">×</a>\n  message\n</div>','utf-8'))

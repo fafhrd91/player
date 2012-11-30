@@ -1,4 +1,6 @@
+{% for err in errors %}
 <div class="alert alert-error">
   <a class="close" data-dismiss="alert">×</a>
-  ${structure: context}
+  {{err|safe}}
 </div>
+{% endfor %}

@@ -1,5 +1,5 @@
 """ simple messages """
-from pyramid.compat import escape
+from pyramid.compat import escape, string_types
 from player import render, tmpl_filter
 
 
@@ -31,8 +31,14 @@ def render_messages(request):
 @tmpl_filter('message:error')
 def error_message(context, request):
     """ Error message filter """
-    if isinstance(context, Exception):
-        context = '%s: %s'%(
-            context.__class__.__name__, escape(str(context), True))
+    if not isinstance(context, (set, list, tuple)):
+        context = (context,)
 
-    return {'context': context}
+    errors = []
+    for err in context:
+        if isinstance(err, Exception):
+            err = '%s: %s'%(
+                err.__class__.__name__, escape(str(err), True))
+        errors.append(err)
+
+    return {'errors': errors}

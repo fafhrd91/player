@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+0.5 (Unreleased)
+----------------
+
+- Use jinja2 for templates
+
+- Added `layout_data` request property
+
+- Allow to pass several messages to `error` message
+
+
 0.4 (11-12-2012)
 ----------------
 

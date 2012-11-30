@@ -11,6 +11,8 @@ from player.message import add_message
 
 
 def includeme(cfg):
+    cfg.include('pyramid_jinja2')
+
     import os
     from pyramid.path import AssetResolver
     from pyramid.settings import aslist
@@ -32,6 +34,10 @@ def includeme(cfg):
 
     # request.set_layout_data
     cfg.add_request_method(set_layout_data, 'set_layout_data')
+
+    def get_layout_data(request):
+        return {}
+    cfg.add_request_method(get_layout_data, 'layout_data', True, True)
 
     # renderer factory
     cfg.add_renderer('.lt', lt_renderer_factory)

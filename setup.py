@@ -3,10 +3,11 @@ import logging
 import multiprocessing
 from setuptools import setup, find_packages
 
-version='0.4'
+version='0.5'
 
 install_requires = ['setuptools',
                     'pyramid >= 1.4a3',
+                    'pyramid_jinja2',
 ]
 
 tests_require = install_requires + ['nose', 'mock']

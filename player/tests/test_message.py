@@ -29,13 +29,20 @@ class TestStatusMessages(BaseTestCase):
         add_message(self.request, 'error', 'error')
 
         self.assertEqual(
-            render_messages(self.request),
-            text_('<div class="alert alert-error">\n  <a class="close" data-dismiss="alert">×</a>\n  error\n</div>\n','utf-8'))
+            render_messages(self.request).strip(),
+            text_(u'<div class="alert alert-error">\n  <a class="close" data-dismiss="alert">\xd7</a>\n  error\n</div>','utf-8'))
 
         add_message(self.request, ValueError('Error'), 'error')
         self.assertEqual(
-            render_messages(self.request),
-            text_('<div class="alert alert-error">\n  <a class="close" data-dismiss="alert">×</a>\n  ValueError: Error\n</div>\n','utf-8'))
+            render_messages(self.request).strip(),
+            text_('<div class="alert alert-error">\n  <a class="close" data-dismiss="alert">×</a>\n  ValueError: Error\n</div>','utf-8'))
+
+    def test_multi_error(self):
+        add_message(self.request, ['error1', ValueError('error2')], 'error')
+
+        res = render_messages(self.request)
+        self.assertIn('error1', res)
+        self.assertIn('ValueError: error2', res)
 
     def test_messages_custom_msg(self):
         self.config.add_layer(

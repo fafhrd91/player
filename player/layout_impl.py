@@ -212,9 +212,7 @@ class LayoutRenderer(object):
                 self.layout, context)
             return content
 
-        value = getattr(request, '__layout_data__', None)
-        if value is None:
-            value = {}
+        value = request.layout_data
 
         for layout, layoutcontext in chain:
             if layout.view is not None:
@@ -241,12 +239,7 @@ class LayoutRenderer(object):
 
 
 def set_layout_data(request, **kw):
-    try:
-        data = request.__layout_data__
-    except:
-        data = request.__layout_data__ = {}
-
-    data.update(kw)
+    request.layout_data.update(kw)
 
 
 class layout(RendererHelper):

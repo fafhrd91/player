@@ -100,7 +100,7 @@ class TestPlayerCommand(BaseTestCase):
         val = self.out.getvalue()
         self.assertIn('* Layer: test1', val)
         self.assertIn('player:tests/dir1/', val)
-        self.assertIn('actions: .pt (test_script.py: test)', val)
+        self.assertIn('actions: .jinja2 (test_script.py: test)', val)
         self.assertIn('* Layer: test2', val)
 
     @mock.patch('player.script.bootstrap')
@@ -118,7 +118,7 @@ class TestPlayerCommand(BaseTestCase):
         val = self.out.getvalue()
         self.assertIn('* Layer: test1', val)
         self.assertIn('player:tests/dir1/', val)
-        self.assertIn('actions: .pt', val)
+        self.assertIn('actions: .jinja2', val)
         self.assertNotIn('* Layer: test2', val)
 
     @mock.patch('player.script.bootstrap')
@@ -193,4 +193,4 @@ class TestPlayerCommand(BaseTestCase):
 
         layer.main()
 
-        self.assertTrue(os.path.join(self.dir, 'view.pt'))
+        self.assertTrue(os.path.join(self.dir, 'view.jinja2'))

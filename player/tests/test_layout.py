@@ -56,7 +56,7 @@ class TestLayout(BaseTestCase):
 
         self.config.add_layout(
             'test', context=Context,
-            renderer='player:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.jinja2')
 
         renderer = LayoutRenderer('test')
         res = renderer('View: test', Context(), self.request)
@@ -92,10 +92,10 @@ class TestLayout(BaseTestCase):
         from player.layout_impl import LayoutRenderer
 
         self.config.add_layout(
-            'test', parent='.', renderer='player:tests/test-layout.pt')
+            'test', parent='.', renderer='player:tests/test-layout.jinja2')
         self.config.add_layout(
             '', context=Root, parent=None,
-            renderer='player:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.jinja2')
 
         root = Root()
         context = Context(root)
@@ -109,10 +109,10 @@ class TestLayout(BaseTestCase):
 
         self.config.add_layout(
             '', context=Context, parent='.',
-            renderer='player:tests/test-layout.pt')
+            renderer='player:tests/test-layout.jinja2')
         self.config.add_layout(
             '', context=Root, parent=None,
-            renderer='player:tests/test-layout-html.pt')
+            renderer='player:tests/test-layout-html.jinja2')
 
         root = Root()
         context1 = Context2(root)
@@ -120,11 +120,11 @@ class TestLayout(BaseTestCase):
         renderer = LayoutRenderer('')
 
         res = renderer('View: test', context2, self.request)
-        self.assertIn('<html><div>View: test</div></html>\n', text_(res))
+        self.assertIn('<html><div>View: test</div></html>', text_(res))
 
     def test_layout_chain_parent_notfound(self):
         self.config.add_layout('', context=Context, parent='page',
-                               renderer='player:tests/test-layout.pt')
+                               renderer='player:tests/test-layout.jinja2')
 
         root = Root()
         context = Context(root)
@@ -246,7 +246,7 @@ class TestLayout(BaseTestCase):
     def test_layout_renderer_layout_debug(self):
         from player.layout_impl import LayoutRenderer
         self.config.add_layout('test', view=View,
-                               renderer='player:tests/test-layout.pt')
+                               renderer='player:tests/test-layout.jinja2')
         self.request.__layout_debug__ = True
 
         rendr = LayoutRenderer('test')
@@ -262,10 +262,10 @@ class TestLayout(BaseTestCase):
         m.choice.return_value = 'red'
 
         self.config.add_layout('test', view=View,
-                               renderer='player:tests/test-layout.pt')
+                               renderer='player:tests/test-layout.jinja2')
         self.config.add_view(
             name='view.html',
-            renderer=player.layout('player:tests/dir1/view.pt', 'test'))
+            renderer=player.layout('player:tests/dir1/view.jinja2', 'test'))
 
         from pyramid.view import render_view_to_response
 
@@ -284,7 +284,7 @@ class TestLayout(BaseTestCase):
         self.config.add_view(
             name='view.html', view=view, renderer=player.layout())
         self.config.add_layout(
-            '', view=View, renderer='player:tests/test-layout.pt')
+            '', view=View, renderer='player:tests/test-layout.jinja2')
 
         res = render_view_to_response(Context(), self.request, 'view.html')
         self.assertEqual('<div>test</div>', res.text.strip())
@@ -300,7 +300,7 @@ class TestLayout(BaseTestCase):
         self.config.add_view(
             name='view.html', renderer=player.layout())
         self.config.add_layout(
-            '', view=view, renderer='player:tests/test-layout.pt')
+            '', view=view, renderer='player:tests/test-layout.jinja2')
 
         res = render_view_to_response(Context(), self.request, 'view.html')
         self.assertIsInstance(res, HTTPFound)

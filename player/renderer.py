@@ -5,6 +5,7 @@ from pyramid.renderers import RendererHelper
 from .layer import ID_LAYER
 
 ID_TEMPLATE = 'player:template'
+ID_TEMPLATE_EXT = 'player:template-ext'
 
 
 class RendererNotFound(ValueError):
@@ -20,11 +21,17 @@ def render(request, asset, context=None, **options):
     templates = registry.get(ID_TEMPLATE)
     if templates is None:
         templates = registry[ID_TEMPLATE] = {}
+        registry[ID_TEMPLATE_EXT] = tuple(
+            name for name, _ in
+            registry.getUtilitiesFor(IRendererFactory) if name.startswith('.'))
 
     if asset not in templates:
-        if asset.endswith('.lt'):
-            r_name = asset
-        else:
+        r_name = None
+        for ext in registry[ID_TEMPLATE_EXT]:
+            if asset.endswith(ext):
+                r_name = asset
+
+        if not r_name:
             r_name = '%s.lt'%asset
 
         templates[asset] = RendererHelper(r_name, registry=registry)

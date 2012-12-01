@@ -1,3 +1,4 @@
+import player
 from base import BaseTestCase
 
 
@@ -85,3 +86,24 @@ class TestRequestRenderers(BaseTestCase):
 
         self.assertRaises(
             ValueError, render, 'test1:view.lt', {})
+
+
+class TestRender(BaseTestCase):
+
+    def setUp(self):
+        super(TestRender, self).setUp()
+
+        self.config.add_layer(
+            'test', path='player:tests/dir1/')
+
+    def test_render(self):
+        text = player.render(self.request, 'test:view').strip()
+        self.assertEqual(text, '<h1>Test</h1>')
+
+    def test_render_standard(self):
+        """
+        It is possible to use standard renderers as asset var
+        """
+        text = player.render(
+            self.request, 'player:tests/dir1/view.jinja2')
+        self.assertEqual(text, '<h1>Test</h1>')

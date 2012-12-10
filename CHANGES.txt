@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+0.6 (12-10-2012)
+----------------
 
 - Allow to use standard renderers in `render` function
 

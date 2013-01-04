@@ -3,6 +3,13 @@
 __all__ = ['tmpl_filter', 'layout', 'add_message',
            'render', 'RendererNotFound', 'includeme']
 
+try:
+    from collections import OrderedDict
+except ImportError: # pragma: no cover
+    import collections
+    from ordereddict import OrderedDict
+    collections.OrderedDict = OrderedDict
+
 from player.layer import tmpl_filter
 from player.layout_impl import layout
 from player.renderer import render

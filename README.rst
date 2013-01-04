@@ -1,8 +1,8 @@
 player
 ======
 
-.. image :: https://secure.travis-ci.org/fafhrd91/player.png 
-  :target:  https://secure.travis-ci.org/fafhrd91/player
+.. image :: https://travis-ci.org/fafhrd91/player.png 
+  :target:  https://travis-ci.org/fafhrd91/player
 
 player allows to address templates with two parameters, 
 category and name. Also it is possible to use set of directories

@@ -30,7 +30,7 @@ class TestStatusMessages(BaseTestCase):
 
         self.assertEqual(
             render_messages(self.request).strip(),
-            text_('<div class="alert alert-error">\n  <a class="close" data-dismiss="alert">×</a>\n  error\n</div>','utf-8'))
+            text_('<div class="alert alert-error alert-danger">\n  <a class="close" data-dismiss="alert">×</a>\n  error\n</div>','utf-8'))
 
         add_message(self.request, ValueError('Error'), 'error')
         self.assertEqual(
